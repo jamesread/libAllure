@@ -26,4 +26,8 @@ function db() {
 	return $db;
 }
 
+function stmt($sql) {
+	return db()->prepare($sql);
+}
+
 ?>
