@@ -49,7 +49,7 @@ class Template extends \Smarty {
 
 		$this->template_dir = $templateDir;
 
-		$this->registerFunction('getContent', 'tplGetContent');
+//		$this->registerFunction('getContent', 'tplGetContent');
 		$this->registerModifier('htmlify', array($this, 'htmlify'));
 		$this->registerModifier('externUrl', array($this, 'externUrl'));
 		$this->registerModifier('externUrlOr', array($this, 'externUrlOr'));
