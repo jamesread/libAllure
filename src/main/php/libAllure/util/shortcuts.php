@@ -3,7 +3,7 @@
 // These shortcuts just save some typing for default configurations.
 
 function san() {
-	require_once 'libAllure/Sanitizer';
+	require_once 'libAllure/Sanitizer.php';
 
 	global $san;
 
@@ -15,7 +15,7 @@ function san() {
 }
 
 function db() {
-	require_once 'libAllure/DatabaseFactory';
+	require_once 'libAllure/Database.php';
 
 	global $db;
 
@@ -28,6 +28,11 @@ function db() {
 
 function stmt($sql) {
 	return db()->prepare($sql);
+}
+
+function tpl($name) {
+	require_once 'libAllure/Template.php';
+	return new libAllure\Template($name);
 }
 
 ?>
