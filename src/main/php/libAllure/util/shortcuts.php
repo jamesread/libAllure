@@ -35,4 +35,9 @@ function tpl($name) {
 	return new libAllure\Template($name);
 }
 
+function errorHandler() {
+	require_once 'libAllure/ErrorHandler.php';
+	return new libAllure\ErrorHandler();
+}
+
 ?>
