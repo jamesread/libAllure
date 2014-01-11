@@ -6,7 +6,7 @@ libAllure is a libraray I wrote to abstract-away concrete implementations of lib
 iIt's a mostly shim library, important functionality relies on well maintained, big libraries, with a possible exception from the session code which is custom. The library is in use by approximately 15+ applications that I know of, it's pretty portable, and you could swap out implementations quite easily if you don't like my choices.
 
 Database.php
-===
+---
 Wrapper around PDO.
 
 	require_once 'libAllure/Database.php';
@@ -21,7 +21,7 @@ Wrapper around PDO.
 	var_dump($results->fetchAll());
 
 ErrorHandler.php
-===
+---
 Custom error handler that complains at the slightest thing, makes debugging nice and easy.
 
 	require_once 'libAllure/ErrorHandler.php';
@@ -34,7 +34,7 @@ Custom error handler that complains at the slightest thing, makes debugging nice
 	throw new Exception('This is a test');
 
 Form.php
-===
+---
 Custom form handling code. 
 
 	require_once 'libAllure/Form.php';
