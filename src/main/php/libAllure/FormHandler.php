@@ -66,7 +66,7 @@ class FormHandler {
 		}
 	}
 
-	private function handleRenderForm(\libAllure\Form $form) {
+	protected function handleRenderForm(\libAllure\Form $form) {
 		require_once 'includes/widgets/header.php';
 
 		if ($this->showSidebar) {
