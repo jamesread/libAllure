@@ -36,7 +36,6 @@ class Template extends \Smarty {
 	public function __construct($cacheDir, $templateDir = 'includes/templates/') {
 		parent::__construct();
 
-
 		if (strpos($cacheDir, '/') === FALSE) {
 			$this->compile_dir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $cacheDir;
 
@@ -48,6 +47,7 @@ class Template extends \Smarty {
 		}
 
 		$this->template_dir = $templateDir;
+		$this->addTemplateDir(__DIR__ . '/templates/'); 
 
 //		$this->registerFunction('getContent', 'tplGetContent');
 		$this->registerModifier('htmlify', array($this, 'htmlify'));
