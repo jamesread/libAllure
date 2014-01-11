@@ -7,7 +7,7 @@ iIt's a mostly shim library, important functionality relies on well maintained, 
 
 Database.php
 ---
-Wrapper around PDO.
+Wrapper around **PDO**.
 
 	require_once 'libAllure/Database.php';
 
@@ -63,3 +63,14 @@ Custom form handling code.
 	}
 
 	$tpl->displayForm($f);
+
+Template.php
+---
+Just a nice wrapper around Smarty2/3, that adds in a few compatibility functions to easily switch between the versions.
+
+	require_once 'libAllure/Template.php';
+
+	use \libAllure\Template;
+
+	$tpl = new Template('myTemplates');
+	$tpl->display('myTemplate.tpl');
