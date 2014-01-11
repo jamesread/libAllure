@@ -1,0 +1,7 @@
+<phpunit>
+	<testsuites>
+		<testsuite name = "main">
+			<directory>src/test/php/</directory>
+		</testsuite>
+	</testsuites>
+</phpunit>
