@@ -121,6 +121,12 @@ class DatabaseStatement extends \PdoStatement {
 
 		return $this->numRows;
 	}
+
+	public function execute($inputParams = null) {
+		parent::execute($inputParams);
+
+		return $this;
+	}
 }
 
 ?>

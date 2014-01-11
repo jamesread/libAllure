@@ -77,7 +77,6 @@ class User {
 		//
 		// Group privs
 		//
-//		$sql = 'SELECT distinct p.key, p.description, g.title AS groupTitle, g.id AS groupId FROM permissions p, privileges_g gp, groups g, users u, group_memberships gm WHERE gm.user = u.id AND gm.group = g.id AND gp.permission = p.id AND gp.group = gm.id AND u.id = "' . $this->getId() . '" ';
 		$username = $this->getUsername();
 		$sql = <<<SQL
 SELECT
@@ -105,18 +104,16 @@ SQL;
 
 		$result = DatabaseFactory::getInstance()->query($sql);
 
-		if ($result->numRows()) {
-			foreach ($result->fetchAll() as $priv) {
-				if ($priv['description'] == '') {
-					$priv['description'] = '???';
-				}
-
-				$priv['source'] = 'Group';
-				$priv['sourceTitle'] = $priv['groupTitle'];
-				$priv['sourceId'] = $priv['groupId'];
-
-				$gPrivs[$priv['key']] = $priv;
+		foreach ($result->fetchAll() as $priv) {
+			if ($priv['description'] == '') {
+				$priv['description'] = '???';
 			}
+
+			$priv['source'] = 'Group';
+			$priv['sourceTitle'] = $priv['groupTitle'];
+			$priv['sourceId'] = $priv['groupId'];
+
+			$gPrivs[$priv['key']] = $priv;
 		}
 
 		//
@@ -160,8 +157,6 @@ SQL;
 		}
 
 		$this->privs = array_merge($uPrivs, $gPrivs);
-
-		// FIXME Sort this for nicer display
 
 		return true;
 	}
