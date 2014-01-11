@@ -25,6 +25,11 @@ class SanitizerTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('a', $this->sanitizer->formatNumericAsHex(0xA));
 		$this->assertEquals('cafe', $this->sanitizer->formatNumericAsHex(0xCAFE));
 	}
+
+	public function testFilterUint() {
+		$_REQUEST['test'] = '0';
+		$this->assertEquals(0, $this->sanitizer->filterUint('test'));
+	}
 }
 
 ?>
