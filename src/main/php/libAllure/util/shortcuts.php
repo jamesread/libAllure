@@ -40,4 +40,36 @@ function errorHandler() {
 	return new libAllure\ErrorHandler();
 }
 
+function filterStrings() {
+	require_once 'libAllure/Sanitizer.php';
+
+	$ret = array();
+	$san = \libAllure\Sanitizer::getInstance();
+	$san->filterAllowUndefined = false;
+
+	foreach (func_get_args() as $argname) {
+		$ret[$argname] = $san->filterString($argname);
+	}
+
+	return $ret;
+}
+
+function filterUints() {
+	require_once 'libAllure/Sanitizer.php';
+
+	$ret = array();
+	$san = \libAllure\Sanitizer::getInstance();
+	$san->filterAllowUndefined = false;
+
+	foreach (func_get_args() as $argname) {
+		$ret[$argname] = $san->filterUint($argname);
+	}
+
+	return $ret;
+}
+
+function vde() {
+	var_dump(func_get_args()); exit;
+}
+
 ?>

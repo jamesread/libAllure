@@ -22,7 +22,7 @@ namespace libAllure;
 if (defined(__FILE__)) { return; } else { define(__FILE__, true); }
 
 class Sanitizer {
-	private $filterAllowUndefined = true;
+	public $filterAllowUndefined = true;
 
 	const INPUT_GET = 1;
 	const INPUT_POST = 2;
