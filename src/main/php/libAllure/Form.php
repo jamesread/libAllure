@@ -759,6 +759,8 @@ class ElementFile extends Element {
 			return;
 		}
 
+		imagealphablending($this->imageResource, false);
+		imagesavealpha($this->imageResource, true);
 		imagepng($this->imageResource, $this->destinationDir . DIRECTORY_SEPARATOR . $this->destinationFilename);
 	}
 
