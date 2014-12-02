@@ -77,10 +77,10 @@ class AuthBackendDatabase extends \libAllure\AuthBackend {
 		return hash($this->hashAlgo, $password);
 	}
 
-	public function getUserAttributes($username) {
-		$sql = 'SELECT * FROM `users` WHERE `username` = :username LIMIT 1';
+	public function getUserAttributes($identifier, $uniqueField = 'username') {
+		$sql = 'SELECT * FROM `users` WHERE `' . $uniqueField . '` = :identifier LIMIT 1';
 		$stmt = $this->database->prepare($sql);
-		$stmt->bindValue(':username', $username);
+		$stmt->bindValue(':identifier', $identifier);
 		$stmt->execute();
 
 		if ($stmt->numRows() == 0) {

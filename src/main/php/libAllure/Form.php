@@ -196,7 +196,7 @@ abstract class Form {
 			$this->addElement(new ElementHidden($roElementName, null, $value));
 		}
 
-		return $this->addElement(new ElementHtml(uniqid(), null, '<fieldset><label>' . $title . '</label>' . $value . '</fieldset>'));
+		return $this->addElement(new ElementHtml(uniqid(), null, '<label>' . $title . '</label>' . $value . ''));
 	}
 
 	public function addElementDetached(Element $el) {
