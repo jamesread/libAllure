@@ -22,7 +22,9 @@ namespace libAllure;
 if (defined(__FILE__)) { return; } else { define(__FILE__, true); }
 
 if (!@include_once 'smarty/libs/Smarty.class.php') {
-	include_once 'Smarty/Smarty.class.php';
+	if (!@include_once 'Smarty/Smarty.class.php') {
+		throw new \Exception('No usable version of Smarty found.');
+	}
 }
 
 require_once 'libAllure/Inflector.php';
