@@ -4,14 +4,17 @@ namespace libAllure;
 
 require_once 'libAllure/Form.php';
 
+use \libAllure\ElementInput;
+use \libAllure\ElementPassword;
+
 class FormRegister extends \libAllure\Form {
 	public function __construct() {
 		parent::__construct('formRegister', 'Register a new account');
 
-		$this->addElement(Element::factory('text', 'username', 'Username'));
-		$this->addElement(Element::factory('password', 'password1', 'Password'));
-		$this->addElement(Element::factory('password', 'password2', 'Password (confirm)'));
-		$this->addElement(Element::factory('text', 'email', 'E-Mail address'));
+		$this->addElement(new ElementInput('username', 'Username'));
+		$this->addElement(new ElementPassword('password1', 'Password'));
+		$this->addElement(new ElementPassword('password2', 'Password (confirm)'));
+		$this->addElement(new ElementInput('email', 'E-Mail address'));
 	
 		$this->addButtons(Form::BTN_SUBMIT);
 	}
