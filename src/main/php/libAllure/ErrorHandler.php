@@ -264,6 +264,8 @@ class ErrorHandler {
 	public function beGreedy() {
 		error_reporting(E_ALL | E_STRICT);
 
+		ini_set('xdebug.var_display_max_depth', 5);
+
 		// check for http errors
 		if (isset($_REQUEST['httpError'])) {
 			$this->handleHttpError(intval($_REQUEST['httpError']));
