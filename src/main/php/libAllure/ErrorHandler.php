@@ -143,10 +143,14 @@ class ErrorHandler {
 						foreach ($point['args'] as $id =>  $arg) {
 							if (is_object($arg)) {
 								echo get_class($arg);
+							} else if (is_null($arg)) {
+								echo '<em>null</em>';
+							} else if (is_string($arg)) {
+								echo '"' . $arg . '"';
 							} else {
-								echo $arg;
+								print_r($arg);
 							}
-
+					
 							if (isset($point['args'][$id + 1])) {
 								echo ', ';
 							}
@@ -259,6 +263,8 @@ class ErrorHandler {
 
 	public function beGreedy() {
 		error_reporting(E_ALL | E_STRICT);
+
+		ini_set('xdebug.var_display_max_depth', 5);
 
 		// check for http errors
 		if (isset($_REQUEST['httpError'])) {

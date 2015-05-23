@@ -27,6 +27,8 @@ class User {
 	private $data = array();
 	private $username;
 
+	public static $uniqueField = 'username';
+
 	private function __construct($username) {
 		$this->username = $username;
 		$this->getData('username', false);
@@ -250,7 +252,7 @@ SQL;
 	}
 
 	private function updateAttributeCache() {
-		$this->data = AuthBackend::getBackend()->getUserAttributes($this->username);
+		$this->data = AuthBackend::getBackend()->getUserAttributes($this->username, self::$uniqueField);
 	}
 
 	public function __toString() {

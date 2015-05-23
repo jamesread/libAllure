@@ -196,7 +196,7 @@ abstract class Form {
 			$this->addElement(new ElementHidden($roElementName, null, $value));
 		}
 
-		return $this->addElement(new ElementHtml(uniqid(), null, '<fieldset><label>' . $title . '</label>' . $value . '</fieldset>'));
+		return $this->addElement(new ElementHtml(uniqid(), null, '<label>' . $title . '</label>' . $value . ''));
 	}
 
 	public function addElementDetached(Element $el) {
@@ -663,6 +663,8 @@ class ElementFile extends Element {
 	public $imageMaxW = 80;
 	public $imageMaxH = 80;
 
+	public $autoResize = true;
+
 	public function getFilename() {
 		return $this->destinationFilename;
 	}
@@ -731,7 +733,14 @@ class ElementFile extends Element {
 		}
 
 		if (imagesx($this->imageResource) > $this->imageMaxW || imagesy($this->imageResource) > $this->imageMaxH) {
-			$this->setValidationError('Image too big, images may up to ' . $this->imageMaxW . 'x' . $this->imageMaxH . ' pixels, that was ' . imagesx($this->imageResource) . 'x' . imagesy($this->imageResource) . ' pixels.');
+			if ($this->autoResize) {
+				$imageResized = imagecreatetruecolor($this->imageMaxW, $this->imageMaxH); 
+				imagecopyresized($imageResized, $this->imageResource, 0, 0, 0, 0, $this->imageMaxW, $this->imageMaxH, imagesx($this->imageResource), imagesy($this->imageResource));
+				
+				$this->imageResource = $imageResized;
+			} else {
+				$this->setValidationError('Image too big, images may up to ' . $this->imageMaxW . 'x' . $this->imageMaxH . ' pixels, that was ' . imagesx($this->imageResource) . 'x' . imagesy($this->imageResource) . ' pixels.');
+			}
 		}
 	}
 
@@ -759,6 +768,8 @@ class ElementFile extends Element {
 			return;
 		}
 
+		imagealphablending($this->imageResource, false);
+		imagesavealpha($this->imageResource, true);
 		imagepng($this->imageResource, $this->destinationDir . DIRECTORY_SEPARATOR . $this->destinationFilename);
 	}
 
