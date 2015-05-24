@@ -23,7 +23,6 @@ if (defined(__FILE__)) { return; } else { define(__FILE__, true); }
 
 if (@include_once 'smarty3/Smarty.class.php') {
 } else if (@include_once 'smarty/libs/Smarty.class.php') {
-} else if (@include_once 'Smarty2/Smarty.class.php') {
 } else if (@include_once 'Smarty/Smarty.class.php') {
 } else {
 		throw new \Exception('No usable version of Smarty found.');
@@ -130,10 +129,6 @@ class Template extends \Smarty {
 
 	public function registerFunction($alias, $function) {
 		$this->registerPlugin('function', $alias, $function);
-	}
-
-	public function registerPlugin($name, $callback) {
-//		$this->registerModifier($name, $callback);
 	}
 
 	public function registerModifier($name, $callback) {
