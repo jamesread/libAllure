@@ -741,38 +741,39 @@ class ElementFile extends Element {
 		}
 	}
 
-	public function resizeImage($srcImage, $dstW, $dstH) {
-		$imageResized = imagecreatetruecolor($dstW, $dstH); 
-		imagealphablending($srcImage, true);
-		imagealphablending($imageResized, true);
+	public static function resizeImage($srcImage, $finW, $finH) {
+		$imageResized = imagecreatetruecolor($finW, $finH); 
+		imagealphablending($srcImage, false);
+		imageinterlace($srcImage, true);
 
+		imagealphablending($imageResized, false);
+		imageinterlace($imageResized, true);
+
+		$srcX = 0;
+		$srcY = 0;
 		$srcW = imagesx($srcImage);
 		$srcH = imagesy($srcImage);
 
+		$offsetX = 0;
+		$offsetY = 0;
+
 		$srcRatio = $srcW / $srcH;
-		$dstRatio = $dstW / $dstH;
+		$dstRatio = $finW / $finH;
 
 		if ($srcRatio < $dstRatio) {
-			$tmpW = (int)($srcH * $dstRatio);
-			$tmpH = $srcH;
-			$srcX = (int)(($srcW - $tmpW) / 2);
-			$srcY = 0;
+			$dstW = $finH * $srcRatio;
+			$dstH = $finH;
+			$offsetX = ($finW - $dstW) / 2;
 		} else {
-			$tmpW = $srcW;
-			$tmpH = (int)($srcW * $dstRatio);
-			$srcX = 0;
-			$srcY = (int)(($srcH - $tmpH) / 2);
+			$dstW = $finW;
+			$dstH = $finW * $srcRatio;
+			$offsetY = ($finH - $dstH) / 2;
 		}
 
-		$srcW = $tmpW;
-		$srcH = $tmpH;
+		$backgroundColor = imagecolorallocate($imageResized, 255, 100, 255);
+		imagefill($imageResized, 0, 0, $backgroundColor);
 
-		imageinterlace($imageResized, false);
-		$white = imagecolorallocate($imageResized, 255, 100, 255);
-		imagefill($imageResized, 0, 0, $white);
-
-		imagecopyresampled($imageResized, $this->imageResource, 1, 1, 1, 1, $srcW, $this->imageMaxH, $this->imageMaxW, $srcH);
-		imagefill($imageResized, 0, 0, $white);
+		imagecopyresampled($imageResized, $srcImage, $offsetX, $offsetY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH);
 
 		return $imageResized;
 	}
