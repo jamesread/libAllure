@@ -734,43 +734,47 @@ class ElementFile extends Element {
 
 		if (imagesx($this->imageResource) > $this->imageMaxW || imagesy($this->imageResource) > $this->imageMaxH) {
 			if ($this->autoResize) {
-				$imageResized = imagecreatetruecolor($this->imageMaxW, $this->imageMaxH); 
-				imagealphablending($this->imageResource, true);
-				imagealphablending($imageResized, true);
-
-				$srcW = imagesx($this->imageResource);
-				$srcH = imagesy($this->imageResource);
-
-				$srcRatio = $srcW / $srcH;
-				$dstRatio = $this->imageMaxW / $this->imageMaxH;
-
-				if ($srcRatio < $dstRatio) {
-					$tmpW = (int)($srcH * $dstRatio);
-					$tmpH = $srcH;
-					$srcX = (int)(($srcW - $tmpW) / 2);
-					$srcY = 0;
-				} else {
-					$tmpW = $srcW;
-					$tmpH = (int)($srcW * $dstRatio);
-					$srcX = 0;
-					$srcY = (int)(($srcH - $tmpH) / 2);
-				}
-
-				$srcW = $tmpW;
-				$srcH = $tmpH;
-
-				imageinterlace($imageResized, false);
-				$white = imagecolorallocate($imageResized, 255, 100, 255);
-				imagefill($imageResized, 0, 0, $white);
-
-				imagecopyresampled($imageResized, $this->imageResource, 1, 1, 1, 1, $srcW, $this->imageMaxH, $this->imageMaxW, $srcH);
-				imagefill($imageResized, 0, 0, $white);
-
-				$this->imageResource = $imageResized;
+				$this->imageResource = self::resizeImage($this->imageResource, $this->imageMaxW, $this->imageMaxH);
 			} else {
 				$this->setValidationError('Image too big, images may up to ' . $this->imageMaxW . 'x' . $this->imageMaxH . ' pixels, that was ' . imagesx($this->imageResource) . 'x' . imagesy($this->imageResource) . ' pixels.');
 			}
 		}
+	}
+
+	public function resizeImage($srcImage, $dstW, $dstH) {
+		$imageResized = imagecreatetruecolor($dstW, $dstH); 
+		imagealphablending($srcImage, true);
+		imagealphablending($imageResized, true);
+
+		$srcW = imagesx($srcImage);
+		$srcH = imagesy($srcImage);
+
+		$srcRatio = $srcW / $srcH;
+		$dstRatio = $dstW / $dstH;
+
+		if ($srcRatio < $dstRatio) {
+			$tmpW = (int)($srcH * $dstRatio);
+			$tmpH = $srcH;
+			$srcX = (int)(($srcW - $tmpW) / 2);
+			$srcY = 0;
+		} else {
+			$tmpW = $srcW;
+			$tmpH = (int)($srcW * $dstRatio);
+			$srcX = 0;
+			$srcY = (int)(($srcH - $tmpH) / 2);
+		}
+
+		$srcW = $tmpW;
+		$srcH = $tmpH;
+
+		imageinterlace($imageResized, false);
+		$white = imagecolorallocate($imageResized, 255, 100, 255);
+		imagefill($imageResized, 0, 0, $white);
+
+		imagecopyresampled($imageResized, $this->imageResource, 1, 1, 1, 1, $srcW, $this->imageMaxH, $this->imageMaxW, $srcH);
+		imagefill($imageResized, 0, 0, $white);
+
+		return $imageResized;
 	}
 
 	/*
