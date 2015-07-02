@@ -770,7 +770,7 @@ class ElementFile extends Element {
 			$offsetY = ($finH - $dstH) / 2;
 		}
 
-		$backgroundColor = imagecolorallocate($imageResized, 255, 100, 255);
+		$backgroundColor = imagecolorallocate($imageResized, 255, 255, 255);
 		imagefill($imageResized, 0, 0, $backgroundColor);
 
 		imagecopyresampled($imageResized, $srcImage, $offsetX, $offsetY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH);
