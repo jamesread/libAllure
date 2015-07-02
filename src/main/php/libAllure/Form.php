@@ -735,8 +735,37 @@ class ElementFile extends Element {
 		if (imagesx($this->imageResource) > $this->imageMaxW || imagesy($this->imageResource) > $this->imageMaxH) {
 			if ($this->autoResize) {
 				$imageResized = imagecreatetruecolor($this->imageMaxW, $this->imageMaxH); 
-				imagecopyresized($imageResized, $this->imageResource, 0, 0, 0, 0, $this->imageMaxW, $this->imageMaxH, imagesx($this->imageResource), imagesy($this->imageResource));
-				
+				imagealphablending($this->imageResource, true);
+				imagealphablending($imageResized, true);
+
+				$srcW = imagesx($this->imageResource);
+				$srcH = imagesy($this->imageResource);
+
+				$srcRatio = $srcW / $srcH;
+				$dstRatio = $this->imageMaxW / $this->imageMaxH;
+
+				if ($srcRatio < $dstRatio) {
+					$tmpW = (int)($srcH * $dstRatio);
+					$tmpH = $srcH;
+					$srcX = (int)(($srcW - $tmpW) / 2);
+					$srcY = 0;
+				} else {
+					$tmpW = $srcW;
+					$tmpH = (int)($srcW * $dstRatio);
+					$srcX = 0;
+					$srcY = (int)(($srcH - $tmpH) / 2);
+				}
+
+				$srcW = $tmpW;
+				$srcH = $tmpH;
+
+				imageinterlace($imageResized, false);
+				$white = imagecolorallocate($imageResized, 255, 100, 255);
+				imagefill($imageResized, 0, 0, $white);
+
+				imagecopyresampled($imageResized, $this->imageResource, 1, 1, 1, 1, $srcW, $this->imageMaxH, $this->imageMaxW, $srcH);
+				imagefill($imageResized, 0, 0, $white);
+
 				$this->imageResource = $imageResized;
 			} else {
 				$this->setValidationError('Image too big, images may up to ' . $this->imageMaxW . 'x' . $this->imageMaxH . ' pixels, that was ' . imagesx($this->imageResource) . 'x' . imagesy($this->imageResource) . ' pixels.');
@@ -768,7 +797,7 @@ class ElementFile extends Element {
 			return;
 		}
 
-		imagealphablending($this->imageResource, false);
+		imagealphablending($this->imageResource, true);
 		imagesavealpha($this->imageResource, true);
 		imagepng($this->imageResource, $this->destinationDir . DIRECTORY_SEPARATOR . $this->destinationFilename);
 	}
