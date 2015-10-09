@@ -406,7 +406,7 @@ abstract class Form {
 	}
 }
 
-abstract class Element {
+abstract class Element implements \JsonSerializable {
 	protected $name;
 	protected $caption;
 	protected $value;
@@ -515,6 +515,16 @@ abstract class Element {
 	public function getValue() {
 		return $this->value;
 	}
+
+	public function jsonSerialize() {
+		return [
+			'name' => $this->name,
+			'caption' => $this->caption,
+			'description' => $this->description,
+			'required' => $this->required,
+			'type' => $this->getType(),
+		];
+	}
 }
 
 class ElementRadio extends Element {
@@ -560,6 +570,56 @@ class ElementTextbox extends Element {
 		$value = strip_tags($value);
 
 		return sprintf('<label for = "%s">%s</label><textarea id = "%s" name = "%s" rows = "8" cols = "80">%s</textarea>', $this->name, $this->caption, $this->name, $this->name, $this->value);
+	}
+}
+
+class ElementInput extends Element {
+	protected $minLength = 4;
+	protected $maxLength = 64;
+
+
+	public function render() {
+		$onChange = (empty($this->onChange)) ? null : 'onkeyup = "' . $this->onChange . '()"';
+
+		$value = htmlentities($this->value, ENT_QUOTES);
+		$value = stripslashes($value);
+		$value = strip_tags($value);
+
+		$classes = ($this->required) ? ' class = "required" ' : null;
+
+		$suggestedValues = array();
+
+		if (!empty($this->suggestedValues)) {
+			foreach ($this->suggestedValues as $suggestedValue => $caption) {
+				$suggestedValues[] = '<span class = "dummyLink" onclick = "document.getElementById(\'' . $this->name . '\').value = \'' . $suggestedValue . '\'">' . $caption . '</span>';
+			}
+		}
+
+		return sprintf('<label ' . $classes . 'for = "%s">%s</label><input %s id = "%s" name = "%s" value = "%s" />%s', $this->name, $this->caption, $onChange, $this->name, $this->name, $value, implode(', ', $suggestedValues));
+	}
+
+	public function validateInternals() {
+		$val = trim($this->getValue());
+		$length = strlen($val);
+
+		if (empty($val) && !$this->required) {
+			return;
+		}
+
+		if ($length < $this->minLength) {
+			$this->setValidationError('You should enter more than ' . $this->minLength . ' characters, this is ' . $length . ' characters long.');
+			return;
+		}
+
+		if ($length > $this->maxLength) {
+			$this->setValidationError('You may not enter more than ' . $this->maxLength . ' characters, this is ' . $length . ' characters long.');
+			return;
+		}
+	}
+
+	public function setMinMaxLengths($minLength, $maxLength) {
+		$this->minLength = $minLength;
+		$this->maxLength = $maxLength;
 	}
 }
 
@@ -813,7 +873,7 @@ class ElementFile extends Element {
 }
 
 class ElementSelect extends Element {
-	protected $options = array();
+	public $options = array();
 	private $size = null;
 
 	public function addOption($value, $key = null) {
@@ -871,6 +931,12 @@ class ElementSelect extends Element {
 			$this->size = $count;
 		}
 	}
+
+	public function jsonSerialize() {
+		return array_merge(parent::jsonSerialize(), array(
+			'options' => $this->options,
+		));
+	}
 }
 
 class ElementAutoSelect extends ElementSelect {
@@ -927,56 +993,6 @@ class ElementDate extends Element {
 JS;
 
 		return $buf;
-	}
-}
-
-class ElementInput extends Element {
-	protected $minLength = 4;
-	protected $maxLength = 64;
-
-
-	public function render() {
-		$onChange = (empty($this->onChange)) ? null : 'onkeyup = "' . $this->onChange . '()"';
-
-		$value = htmlentities($this->value, ENT_QUOTES);
-		$value = stripslashes($value);
-		$value = strip_tags($value);
-
-		$classes = ($this->required) ? ' class = "required" ' : null;
-
-		$suggestedValues = array();
-
-		if (!empty($this->suggestedValues)) {
-			foreach ($this->suggestedValues as $suggestedValue => $caption) {
-				$suggestedValues[] = '<span class = "dummyLink" onclick = "document.getElementById(\'' . $this->name . '\').value = \'' . $suggestedValue . '\'">' . $caption . '</span>';
-			}
-		}
-
-		return sprintf('<label ' . $classes . 'for = "%s">%s</label><input %s id = "%s" name = "%s" value = "%s" />%s', $this->name, $this->caption, $onChange, $this->name, $this->name, $value, implode(', ', $suggestedValues));
-	}
-
-	public function validateInternals() {
-		$val = trim($this->getValue());
-		$length = strlen($val);
-
-		if (empty($val) && !$this->required) {
-			return;
-		}
-
-		if ($length < $this->minLength) {
-			$this->setValidationError('You should enter more than ' . $this->minLength . ' characters, this is ' . $length . ' characters long.');
-			return;
-		}
-
-		if ($length > $this->maxLength) {
-			$this->setValidationError('You may not enter more than ' . $this->maxLength . ' characters, this is ' . $length . ' characters long.');
-			return;
-		}
-	}
-
-	public function setMinMaxLengths($minLength, $maxLength) {
-		$this->minLength = $minLength;
-		$this->maxLength = $maxLength;
 	}
 }
 
