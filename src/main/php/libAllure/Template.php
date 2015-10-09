@@ -22,6 +22,7 @@ namespace libAllure;
 if (defined(__FILE__)) { return; } else { define(__FILE__, true); }
 
 if (@include_once 'smarty3/Smarty.class.php') {
+} else if (@include_once 'smarty/Smarty.class.php') {
 } else if (@include_once 'smarty/libs/Smarty.class.php') {
 } else if (@include_once 'Smarty/Smarty.class.php') {
 } else {
