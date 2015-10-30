@@ -1,0 +1,17 @@
+{
+    "name": "jwread/lib-allure",
+    "description": "A set of utilities, helpers and shims. It aims to be pretty modular and lightweight.",
+    "require": {
+        "smarty/smarty": "^3.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^5.0"
+    },
+    "license": "GPLv2",
+    "authors": [
+        {
+            "name": "jamesread",
+            "email": "contact@jwread.com"
+        }
+    ]
+}

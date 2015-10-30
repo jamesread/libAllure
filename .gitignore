@@ -2,3 +2,5 @@ target
 .buildpath
 .project
 .settings
+
+/vendor/
