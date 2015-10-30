@@ -1,7 +1,7 @@
 {
     "name": "jwread/lib-allure",
     "description": "A set of utilities, helpers and shims. It aims to be pretty modular and lightweight.",
-    "require": {
+    "suggests": {
         "smarty/smarty": "^3.1"
     },
     "require-dev": {
