@@ -1,10 +1,7 @@
 libAllure
 ==
 
-libAllure is a library I wrote to abstract-away concrete implementations of libraries that I use in a lot of PHP applications I write. 
-
-It's a mostly shim library, important functionality relies on well maintained, big libraries, with a possible exception from the session code which is custom. The library is in use by approximately 15+ applications that I know of, it's pretty portable, and you could swap out implementations quite easily if you don't like my choices.
-
+A set of utilities, helpers and shims. It aims to be pretty modular and lightweight.
 
 [![Travis build Status](https://travis-ci.org/jamesread/libAllure.png?branch=master)](https://travis-ci.org/jamesread/libAllure)
 
