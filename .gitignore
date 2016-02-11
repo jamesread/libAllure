@@ -2,5 +2,7 @@ target
 .buildpath
 .project
 .settings
+composer.lock
+.buildid
 
 /vendor/
