@@ -141,10 +141,6 @@ class HtmlLinksCollection implements \Iterator {
 		}
 	}
 
-	public function addSeparator() {
-		$this->add('#sep', '', null, null);
-	}
-
 	public function getAll() {
 		return $this->collection;
 	}
