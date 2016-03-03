@@ -87,6 +87,10 @@ class Sanitizer {
 		}
 	}
 
+	public function filterId() {
+		return $this->filterUint('id');
+	}
+
 	public function filterUint($name, $min = 0, $max = PHP_INT_MAX) {
 		$min = max($min, 0); // rectify sint
 
