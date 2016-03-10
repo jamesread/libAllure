@@ -884,6 +884,12 @@ class ElementSelect extends Element {
 		}
 	}
 
+	public function addOptions($options) {
+		foreach ($option as $key => $value) {
+			$this->addOption($key, $value);
+		}
+	}
+
 	public function render() {
 		$strOptions = '';
 
