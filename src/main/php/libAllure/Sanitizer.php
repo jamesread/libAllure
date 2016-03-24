@@ -208,6 +208,16 @@ class Sanitizer {
 			return false;
 		}
 	}
+
+	public function filterEnum($name, $accepted, $default = null) {
+		$value = $this->filterString($name);
+
+		if (in_array($value, $accepted)) {
+			return $value;
+		} else {
+			return $default;
+		}
+	}
 }
 
 ?>

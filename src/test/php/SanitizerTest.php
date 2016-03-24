@@ -30,6 +30,17 @@ class SanitizerTest extends PHPUnit_Framework_TestCase {
 		$_REQUEST['test'] = '0';
 		$this->assertEquals(0, $this->sanitizer->filterUint('test'));
 	}
+
+	public function testFilterEnum() {
+		unset($_REQUEST['test']);
+		$this->assertEquals('Bananas', $this->sanitizer->filterEnum('test', array('Apples', 'Bananas', 'Chestnuts'), 'Bananas'));
+
+		$_REQUEST['test'] = 'Bananas';
+		$this->assertEquals('Bananas', $this->sanitizer->filterEnum('test', array('Apples', 'Bananas', 'Chestnuts'), 'Bananas'));
+
+		$_REQUEST['test'] = 'Waffles';
+		$this->assertEquals('Bananas', $this->sanitizer->filterEnum('test', array('Apples', 'Bananas', 'Chestnuts'), 'Bananas'));
+	}
 }
 
 ?>
