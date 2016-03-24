@@ -19,8 +19,6 @@
 
 namespace libAllure;
 
-if (defined(__FILE__)) { return; } else { define(__FILE__, true); }
-
 class User {
 	private $privs = array();
 	private $usergroups = array();
