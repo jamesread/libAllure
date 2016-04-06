@@ -25,6 +25,7 @@ class FormHandler {
 	private $formName;
 	private $tpl;
 	private $showSidebar = false;
+	public $showFooter = true;
 
 	private $constructorArguments;
 
@@ -76,7 +77,9 @@ class FormHandler {
 		$this->tpl->assignForm($form);
 		$this->tpl->display('form.tpl');
 
-		require_once 'includes/widgets/footer.php';
+		if ($this->showFooter) {
+			require_once 'includes/widgets/footer.php';
+		}
 	}
 
 	public function setConstructorArgument($id, $value) {
