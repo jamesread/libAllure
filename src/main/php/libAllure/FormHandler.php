@@ -22,6 +22,7 @@ namespace libAllure;
 if (defined(__FILE__)) { return; } else { define(__FILE__, true); }
 
 class FormHandler {
+	private $form = null;
 	private $formName;
 	private $tpl;
 	private $showSidebar = false;
@@ -47,14 +48,22 @@ class FormHandler {
 		$this->showSidebar = $showSidebar;
 	}
 
-	public function handle() {
-		$form = new $this->formName(
+	public function constructForm() {
+		if ($this->form != null) {
+			return;
+		}
+
+		$this->form = new $this->formName(
 			$this->constructorArguments[0],
 			$this->constructorArguments[1],
 			$this->constructorArguments[2],
 			$this->constructorArguments[3],
 			$this->constructorArguments[4]
 		);
+	}
+
+	public function handle() {
+		$this->construct();
 
 		if ($form->validate()) {
 			$form->process();
@@ -97,6 +106,10 @@ class FormHandler {
 		if (empty($_SESSION['formRedirectReason'])) {
 			$_SESSION['formRedirectReason'] = 'You are being redirected.';
 		}
+	}
+
+	public function getForm() {
+		return $this->form;
 	}
 }
 

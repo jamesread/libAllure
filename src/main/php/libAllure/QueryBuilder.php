@@ -119,18 +119,23 @@ class QueryBuilder {
 		}
 	}
 
-	public function join($tbl) {
-		return $this->leftJoin($tbl);
+	public function join($tbl, $alias = null) {
+		return $this->leftJoin($tbl, $alias);
 	}
 
-	public function leftJoin($tbl) {
-		return $this->joinImpl('LEFT', $tbl);
+	public function leftJoin($tbl, $alias = null) {
+		return $this->joinImpl('LEFT', $tbl, $alias);
 	}
 
-	public function joinImpl($direction, $tbl) {
+	public function joinImpl($direction, $tbl, $alias = null) {
+		if ($alias == null) {
+			$alias = substr($tbl, 0, 1);
+		}
+
 		$this->joins[$tbl] = array(
 			'direction' => $direction,
-			'table' => $tbl
+			'table' => $tbl,
+			'alias' => $alias
 		);
 
 		$this->lastJoinedTable = $tbl;
@@ -204,9 +209,7 @@ class QueryBuilder {
 		$ret = '';
 
 		foreach ($this->joins as $join) {
-			$prefix = substr($join['table'], 0, 1);
-
-			$ret .= ' ' . $join['direction'] . ' JOIN ' . $join['table'] . ' ' . $prefix . ' ' . $this->buildJoinConditions($join['table']);
+			$ret .= ' ' . $join['direction'] . ' JOIN ' . $join['table'] . ' ' . $join['alias'] . ' ' . $this->buildJoinConditions($join['table']);
 		}
 		
 		return $ret;		

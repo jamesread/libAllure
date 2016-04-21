@@ -2,6 +2,7 @@
 
 require_once 'common.php';
 require_once 'libAllure/Form.php';
+require_once 'libAllure/FormHandler.php';
 
 use \libAllure\Form;
 use \libAllure\Element;
