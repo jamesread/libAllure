@@ -63,16 +63,16 @@ class FormHandler {
 	}
 
 	public function handle() {
-		$this->construct();
+		$this->constructForm();
 
-		if ($form->validate()) {
+		if ($this-this->form->validate()) {
 			$form->process();
 			
 			if (!empty($_SESSION['formRedirectUrl'])) {
 				redirect($_SESSION['formRedirectUrl'], $_SESSION['formRedirectReason']);
 			}
 		} else {
-			$this->handleRenderForm($form);
+			$this->handleRenderForm($this->form);
 		}
 	}
 
