@@ -1,6 +1,7 @@
 <?php
 
 require_once 'common.php';
+require_once 'libAllure/QueryBuilder.php';
 
 use \libAllure\QueryBuilder;
 
