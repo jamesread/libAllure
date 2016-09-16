@@ -104,7 +104,7 @@ class ErrorHandler {
 		$this->clearOutputBuffers();
 
 		if (!ini_get('display_errors') == '1') {
-			throw new RuntimeException('A serious error has occoured, which cannot be sent via the web browser due to the webserver security configuration.');
+			throw new \RuntimeException('A serious error has occoured, which cannot be sent via the web browser due to the webserver security configuration.');
 		}
 
 		// Show the error.
@@ -196,18 +196,18 @@ class ErrorHandler {
 		// Dont include "my" in the search because it would return 0, which would evaluate to false and thats a pain in the ass. So, instead, we use "sql_...". This is a long comment.
 		if (strpos($message, 'sqli_connect')) {
 			if (strpos($message, '1045')) {
-				throw new RuntimeException("Access denied by the database server");
+				throw new \RuntimeException("Access denied by the database server");
 			}
 
 			if (strpos($message, '10061')) {
-				throw new RuntimeException("Could not connect to the database server. The server may not be responding.");
+				throw new \RuntimeException("Could not connect to the database server. The server may not be responding.");
 			}
 
 			if (strpos($message, '1049')) {
-				throw new RuntimeException("Connected to the database server, but the database does not exist!");
+				throw new \RuntimeException("Connected to the database server, but the database does not exist!");
 			}
 
-			throw new RuntimeException('There was an unrecognized problem when connecting to the database: ' . $message);
+			throw new \RuntimeException('There was an unrecognized problem when connecting to the database: ' . $message);
 		}
 
 		$code = self::errorCodeToString($code);
