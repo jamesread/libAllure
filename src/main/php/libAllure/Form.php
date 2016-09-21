@@ -929,7 +929,16 @@ class ElementSelect extends Element {
 			$suggestedValues = '<p class = "suggestedValueContainer">' . $suggestedValues . '</p>';
 		}
 
-		return sprintf('<label>%s</label><select id = "%s" %s %s name = "%s">%s</select>' . $suggestedValues, $this->caption, $this->name, $onChange, $size, $this->name, $strOptions);
+		$htmlName = $this->name;
+
+		$multiple = '';
+
+		if (isset($this->multiple)) {
+			$multiple = 'multiple';
+			$htmlName .= '[]';
+		}
+
+		return sprintf('<label>%s</label><select id = "%s" %s %s %s name = "%s">%s</select>' . $suggestedValues, $this->caption, $htmlName, $onChange, $size, $multiple, $htmlName, $strOptions);
 	}
 
 	public function setSize($count) {
