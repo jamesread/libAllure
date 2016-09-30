@@ -84,6 +84,14 @@ class QueryBuilderTest extends PHPUnit_Framework_TestCase {
 
 		$this->assertEquals('SELECT s.id, s.forename FROM staff s WHERE s.id NOT IN (SELECT s2.id FROM staff s2 WHERE s2.id > 500 ORDER BY s2.id) ORDER BY s.id', $qb->build());
 	}
+
+	public function testGroup() {
+		$qb = new QueryBuilder();
+		$qb->fields('p.id', 'p.forename')->from('people');
+		$qb->groupBy('p.forename');
+
+		$this->assertEquals('SELECT p.id, p.forename FROM people p GROUP BY p.forename ORDER BY p.id', $qb->build());
+	}
 }
 
 ?>

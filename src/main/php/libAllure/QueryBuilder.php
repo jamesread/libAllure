@@ -8,6 +8,7 @@ class QueryBuilder {
 	private $from;
 	private $orderBy = array();
 	private $where = array();
+	private $group = null;
 	private $joins = array();
 	private $joinConditions = array();
 
@@ -167,6 +168,16 @@ class QueryBuilder {
 		return $this;
 	}
 
+	public function groupBy($field) {
+		return $this->group($field);
+	}
+
+	public function group($field) {
+		$this->group = $field;
+
+		return $this;
+	}
+
 	private function buildFields() {
 		$clauses = array();
 
@@ -225,6 +236,14 @@ class QueryBuilder {
 		return 'ON '. implode(' AND ', $clauses);
 	}
 
+	public function buildGroup() {
+		if ($this->group == null) {
+			return '';
+		} else {
+			return ' GROUP BY ' . $this->group;
+		}
+	}
+
 	public function build() {
 		if (!is_array($this->from)) {
 			throw new \Exception("From table not specified");
@@ -238,6 +257,7 @@ class QueryBuilder {
 		$ret .= $this->buildFields() . ' FROM ' . $this->from['table'] . ' ';
 		$ret .= $this->from['prefix'] . $this->buildJoins();
 		$ret .= $this->buildWhere();
+		$ret .= $this->buildGroup();
 		$ret .= ' ORDER BY ' . $this->buildOrderBy();
 
 		return $ret;
