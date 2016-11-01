@@ -21,17 +21,6 @@ namespace libAllure;
 
 if (defined(__FILE__)) { return; } else { define(__FILE__, true); }
 
-abstract class LogEventType {
-	const TESTING = 1000;
-	const USER_LOGIN = 1001;
-	const USER_LOGOUT = 1002;
-	CONST USER_REGISTER = 1003;
-	const LOGIN_FAILURE = 1060;
-	const LOGIN_FAILURE_USERNAME = 1061;
-	const LOGIN_FAILURE_PASSWORD = 1062;
-}
-
-
 function syslogListener($priority, $message, $type) {
 	syslog(LOG_NOTICE, $message);
 }
