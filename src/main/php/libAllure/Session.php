@@ -68,28 +68,33 @@ class Session {
 		}
 	}
 
+	public static function performLogin($username, $againstField = 'username') {
+		session_regenerate_id();
+
+		// Create account if it does not exist.
+		self::checkLocalAccount($username, $againstField);
+
+		// Construct the user object and store it in the session
+		User::$uniqueField = $againstField;
+		$user = \libAllure\User::getUser($username);
+		$_SESSION['user'] = $user;
+		$_SESSION['username'] = $username;
+
+		$now = new \DateTime();
+		$now = $now->format('Y-m-d H:s');
+
+		$sql = 'UPDATE users SET lastLogin = :now WHERE id = :id LIMIT 1';
+		$stmt = DatabaseFactory::getInstance()->prepare($sql);
+		$stmt->bindValue(':now', $now);
+		$stmt->bindValue(':id', $user->getId());
+		$stmt->execute();
+	}
+
 	public static function checkCredentials($username, $password) {
 		$credCheck = AuthBackend::getBackend()->checkCredentials($username, $password);
 
 		if ($credCheck) {
-			session_regenerate_id();
-
-			// Create account if it does not exist.
-			self::checkLocalAccount($username);
-
-			// Construct the user object and store it in the session
-			$user = \libAllure\User::getUser($username);
-			$_SESSION['user'] = $user;
-			$_SESSION['username'] = $username;
-
-			$now = new \DateTime();
-			$now = $now->format('Y-m-d H:s');
-
-			$sql = 'UPDATE users SET lastLogin = :now WHERE id = :id LIMIT 1';
-			$stmt = DatabaseFactory::getInstance()->prepare($sql);
-			$stmt->bindValue(':now', $now);
-			$stmt->bindValue(':id', $user->getId());
-			$stmt->execute();
+			self::performLogin($username);
 
 			Logger::messageDebug('Sucessful login for: ' . $username, LogEventType::USER_LOGIN);
 			return true;
@@ -99,21 +104,20 @@ class Session {
 		}
 	}
 
-	private static function checkLocalAccount($username) {
-		$sql = 'SELECT username FROM `users` WHERE `username` = :username LIMIT 1';
+	private static function checkLocalAccount($identifier, $field) {
+		$sql = 'SELECT username FROM `users` WHERE `' . $field . '` = :identifier LIMIT 1';
 		$stmt = DatabaseFactory::getInstance()->prepare($sql);
-		$stmt->bindValue(':username', $username);
+		$stmt->bindValue(':identifier', $identifier);
 		$stmt->execute();
 
 		if ($stmt->numRows() >= 1) {
 			// This user has a local account
 		} else {
 			// Create a local account for this user.
-			$sql = 'INSERT INTO users (username, `group`) VALUES (:username, 1) ';
+			$sql = 'INSERT INTO users (' . $field . ', `group`) VALUES (:identifier, 1) ';
 			$stmt = DatabaseFactory::getInstance()->prepare($sql);
-			$stmt->bindValue(':username', $username);
-
-			infobox('This is probably the first time you have used TEFSys, so the system has just setup your user account.');
+			$stmt->bindValue(':identifier', $identifier);
+			$stmt->execute();
 		}
 	}
 

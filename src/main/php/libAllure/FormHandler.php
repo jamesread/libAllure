@@ -22,9 +22,11 @@ namespace libAllure;
 if (defined(__FILE__)) { return; } else { define(__FILE__, true); }
 
 class FormHandler {
+	private $form = null;
 	private $formName;
 	private $tpl;
 	private $showSidebar = false;
+	public $showFooter = true;
 
 	private $constructorArguments;
 
@@ -46,23 +48,31 @@ class FormHandler {
 		$this->showSidebar = $showSidebar;
 	}
 
-	public function handle() {
-		$form = new $this->formName(
+	public function constructForm() {
+		if ($this->form != null) {
+			return;
+		}
+
+		$this->form = new $this->formName(
 			$this->constructorArguments[0],
 			$this->constructorArguments[1],
 			$this->constructorArguments[2],
 			$this->constructorArguments[3],
 			$this->constructorArguments[4]
 		);
+	}
 
-		if ($form->validate()) {
-			$form->process();
+	public function handle() {
+		$this->constructForm();
+
+		if ($this->form->validate()) {
+			$this->form->process();
 			
 			if (!empty($_SESSION['formRedirectUrl'])) {
 				redirect($_SESSION['formRedirectUrl'], $_SESSION['formRedirectReason']);
 			}
 		} else {
-			$this->handleRenderForm($form);
+			$this->handleRenderForm($this->form);
 		}
 	}
 
@@ -76,7 +86,9 @@ class FormHandler {
 		$this->tpl->assignForm($form);
 		$this->tpl->display('form.tpl');
 
-		require_once 'includes/widgets/footer.php';
+		if ($this->showFooter) {
+			require_once 'includes/widgets/footer.php';
+		}
 	}
 
 	public function setConstructorArgument($id, $value) {
@@ -94,6 +106,10 @@ class FormHandler {
 		if (empty($_SESSION['formRedirectReason'])) {
 			$_SESSION['formRedirectReason'] = 'You are being redirected.';
 		}
+	}
+
+	public function getForm() {
+		return $this->form;
 	}
 }
 

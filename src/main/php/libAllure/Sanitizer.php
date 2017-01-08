@@ -22,7 +22,7 @@ namespace libAllure;
 if (defined(__FILE__)) { return; } else { define(__FILE__, true); }
 
 class Sanitizer {
-	private $filterAllowUndefined = true;
+	public $filterAllowUndefined = true;
 
 	const INPUT_GET = 1;
 	const INPUT_POST = 2;
@@ -85,6 +85,10 @@ class Sanitizer {
 		} else {
 			throw new \Exception('Input variable not found: ' . $name);
 		}
+	}
+
+	public function filterId() {
+		return $this->filterUint('id');
 	}
 
 	public function filterUint($name, $min = 0, $max = PHP_INT_MAX) {
@@ -202,6 +206,16 @@ class Sanitizer {
 			return true;
 		} else {
 			return false;
+		}
+	}
+
+	public function filterEnum($name, $accepted, $default = null) {
+		$value = $this->filterString($name);
+
+		if (in_array($value, $accepted)) {
+			return $value;
+		} else {
+			return $default;
 		}
 	}
 }

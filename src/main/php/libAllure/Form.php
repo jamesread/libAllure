@@ -196,7 +196,7 @@ abstract class Form {
 			$this->addElement(new ElementHidden($roElementName, null, $value));
 		}
 
-		return $this->addElement(new ElementHtml(uniqid(), null, '<fieldset><label>' . $title . '</label>' . $value . '</fieldset>'));
+		return $this->addElement(new ElementHtml(uniqid(), null, '<label>' . $title . '</label>' . $value . ''));
 	}
 
 	public function addElementDetached(Element $el) {
@@ -406,7 +406,7 @@ abstract class Form {
 	}
 }
 
-abstract class Element {
+abstract class Element implements \JsonSerializable {
 	protected $name;
 	protected $caption;
 	protected $value;
@@ -515,6 +515,16 @@ abstract class Element {
 	public function getValue() {
 		return $this->value;
 	}
+
+	public function jsonSerialize() {
+		return [
+			'name' => $this->name,
+			'caption' => $this->caption,
+			'description' => $this->description,
+			'required' => $this->required,
+			'type' => $this->getType(),
+		];
+	}
 }
 
 class ElementRadio extends Element {
@@ -560,6 +570,56 @@ class ElementTextbox extends Element {
 		$value = strip_tags($value);
 
 		return sprintf('<label for = "%s">%s</label><textarea id = "%s" name = "%s" rows = "8" cols = "80">%s</textarea>', $this->name, $this->caption, $this->name, $this->name, $this->value);
+	}
+}
+
+class ElementInput extends Element {
+	protected $minLength = 4;
+	protected $maxLength = 64;
+
+
+	public function render() {
+		$onChange = (empty($this->onChange)) ? null : 'onkeyup = "' . $this->onChange . '()"';
+
+		$value = htmlentities($this->value, ENT_QUOTES);
+		$value = stripslashes($value);
+		$value = strip_tags($value);
+
+		$classes = ($this->required) ? ' class = "required" ' : null;
+
+		$suggestedValues = array();
+
+		if (!empty($this->suggestedValues)) {
+			foreach ($this->suggestedValues as $suggestedValue => $caption) {
+				$suggestedValues[] = '<span class = "dummyLink" onclick = "document.getElementById(\'' . $this->name . '\').value = \'' . $suggestedValue . '\'">' . $caption . '</span>';
+			}
+		}
+
+		return sprintf('<label ' . $classes . 'for = "%s">%s</label><input %s id = "%s" name = "%s" value = "%s" />%s', $this->name, $this->caption, $onChange, $this->name, $this->name, $value, implode(', ', $suggestedValues));
+	}
+
+	public function validateInternals() {
+		$val = trim($this->getValue());
+		$length = strlen($val);
+
+		if (empty($val) && !$this->required) {
+			return;
+		}
+
+		if ($length < $this->minLength) {
+			$this->setValidationError('You should enter more than ' . $this->minLength . ' characters, this is ' . $length . ' characters long.');
+			return;
+		}
+
+		if ($length > $this->maxLength) {
+			$this->setValidationError('You may not enter more than ' . $this->maxLength . ' characters, this is ' . $length . ' characters long.');
+			return;
+		}
+	}
+
+	public function setMinMaxLengths($minLength, $maxLength) {
+		$this->minLength = $minLength;
+		$this->maxLength = $maxLength;
 	}
 }
 
@@ -663,6 +723,8 @@ class ElementFile extends Element {
 	public $imageMaxW = 80;
 	public $imageMaxH = 80;
 
+	public $autoResize = true;
+
 	public function getFilename() {
 		return $this->destinationFilename;
 	}
@@ -731,8 +793,49 @@ class ElementFile extends Element {
 		}
 
 		if (imagesx($this->imageResource) > $this->imageMaxW || imagesy($this->imageResource) > $this->imageMaxH) {
-			$this->setValidationError('Image too big, images may up to ' . $this->imageMaxW . 'x' . $this->imageMaxH . ' pixels, that was ' . imagesx($this->imageResource) . 'x' . imagesy($this->imageResource) . ' pixels.');
+			if ($this->autoResize) {
+				$this->imageResource = self::resizeImage($this->imageResource, $this->imageMaxW, $this->imageMaxH);
+			} else {
+				$this->setValidationError('Image too big, images may up to ' . $this->imageMaxW . 'x' . $this->imageMaxH . ' pixels, that was ' . imagesx($this->imageResource) . 'x' . imagesy($this->imageResource) . ' pixels.');
+			}
 		}
+	}
+
+	public static function resizeImage($srcImage, $finW, $finH) {
+		$imageResized = imagecreatetruecolor($finW, $finH); 
+		imagealphablending($srcImage, false);
+		imageinterlace($srcImage, true);
+
+		imagealphablending($imageResized, false);
+		imageinterlace($imageResized, true);
+
+		$srcX = 0;
+		$srcY = 0;
+		$srcW = imagesx($srcImage);
+		$srcH = imagesy($srcImage);
+
+		$offsetX = 0;
+		$offsetY = 0;
+
+		$srcRatio = $srcW / $srcH;
+		$dstRatio = $finW / $finH;
+
+		if ($srcRatio < $dstRatio) {
+			$dstW = $finH * $srcRatio;
+			$dstH = $finH;
+			$offsetX = ($finW - $dstW) / 2;
+		} else {
+			$dstW = $finW;
+			$dstH = $finW * $srcRatio;
+			$offsetY = ($finH - $dstH) / 2;
+		}
+
+		$backgroundColor = imagecolorallocate($imageResized, 255, 255, 255);
+		imagefill($imageResized, 0, 0, $backgroundColor);
+
+		imagecopyresampled($imageResized, $srcImage, $offsetX, $offsetY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH);
+
+		return $imageResized;
 	}
 
 	/*
@@ -759,6 +862,8 @@ class ElementFile extends Element {
 			return;
 		}
 
+		imagealphablending($this->imageResource, true);
+		imagesavealpha($this->imageResource, true);
 		imagepng($this->imageResource, $this->destinationDir . DIRECTORY_SEPARATOR . $this->destinationFilename);
 	}
 
@@ -768,7 +873,7 @@ class ElementFile extends Element {
 }
 
 class ElementSelect extends Element {
-	protected $options = array();
+	public $options = array();
 	private $size = null;
 
 	public function addOption($value, $key = null) {
@@ -776,6 +881,12 @@ class ElementSelect extends Element {
 			$this->options[$value] = $value;
 		} else {
 			$this->options[$key] = $value;
+		}
+	}
+
+	public function addOptions($options) {
+		foreach ($options as $value => $caption) {
+			$this->addOption($caption, $value);
 		}
 	}
 
@@ -818,13 +929,28 @@ class ElementSelect extends Element {
 			$suggestedValues = '<p class = "suggestedValueContainer">' . $suggestedValues . '</p>';
 		}
 
-		return sprintf('<label>%s</label><select id = "%s" %s %s name = "%s">%s</select>' . $suggestedValues, $this->caption, $this->name, $onChange, $size, $this->name, $strOptions);
+		$htmlName = $this->name;
+
+		$multiple = '';
+
+		if (isset($this->multiple)) {
+			$multiple = 'multiple';
+			$htmlName .= '[]';
+		}
+
+		return sprintf('<label>%s</label><select id = "%s" %s %s %s name = "%s">%s</select>' . $suggestedValues, $this->caption, $htmlName, $onChange, $size, $multiple, $htmlName, $strOptions);
 	}
 
 	public function setSize($count) {
 		if (is_int($count) && $count > 0) {
 			$this->size = $count;
 		}
+	}
+
+	public function jsonSerialize() {
+		return array_merge(parent::jsonSerialize(), array(
+			'options' => $this->options,
+		));
 	}
 }
 
@@ -882,56 +1008,6 @@ class ElementDate extends Element {
 JS;
 
 		return $buf;
-	}
-}
-
-class ElementInput extends Element {
-	protected $minLength = 4;
-	protected $maxLength = 64;
-
-
-	public function render() {
-		$onChange = (empty($this->onChange)) ? null : 'onkeyup = "' . $this->onChange . '()"';
-
-		$value = htmlentities($this->value, ENT_QUOTES);
-		$value = stripslashes($value);
-		$value = strip_tags($value);
-
-		$classes = ($this->required) ? ' class = "required" ' : null;
-
-		$suggestedValues = array();
-
-		if (!empty($this->suggestedValues)) {
-			foreach ($this->suggestedValues as $suggestedValue => $caption) {
-				$suggestedValues[] = '<span class = "dummyLink" onclick = "document.getElementById(\'' . $this->name . '\').value = \'' . $suggestedValue . '\'">' . $caption . '</span>';
-			}
-		}
-
-		return sprintf('<label ' . $classes . 'for = "%s">%s</label><input %s id = "%s" name = "%s" value = "%s" />%s', $this->name, $this->caption, $onChange, $this->name, $this->name, $value, implode(', ', $suggestedValues));
-	}
-
-	public function validateInternals() {
-		$val = trim($this->getValue());
-		$length = strlen($val);
-
-		if (empty($val) && !$this->required) {
-			return;
-		}
-
-		if ($length < $this->minLength) {
-			$this->setValidationError('You should enter more than ' . $this->minLength . ' characters, this is ' . $length . ' characters long.');
-			return;
-		}
-
-		if ($length > $this->maxLength) {
-			$this->setValidationError('You may not enter more than ' . $this->maxLength . ' characters, this is ' . $length . ' characters long.');
-			return;
-		}
-	}
-
-	public function setMinMaxLengths($minLength, $maxLength) {
-		$this->minLength = $minLength;
-		$this->maxLength = $maxLength;
 	}
 }
 

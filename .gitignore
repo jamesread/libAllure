@@ -3,3 +3,6 @@ target
 .project
 .settings
 vendor/
+composer.lock
+.buildid
+**/*.swp

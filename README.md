@@ -1,15 +1,37 @@
 libAllure
 ==
 
-libAllure is a libraray I wrote to abstract-away concrete implementations of libraries that I use in a lot of PHP applications I write. 
-
-It's a mostly shim library, important functionality relies on well maintained, big libraries, with a possible exception from the session code which is custom. The library is in use by approximately 15+ applications that I know of, it's pretty portable, and you could swap out implementations quite easily if you don't like my choices.
-
+A set of utilities, helpers and shims. It aims to be pretty modular and lightweight.
 
 [![Travis build Status](https://travis-ci.org/jamesread/libAllure.png?branch=master)](https://travis-ci.org/jamesread/libAllure)
 
-Database.php
----
+## Adding with `composer`
+
+You can add libAllure to your project quickly, if you're using composer.
+
+	composer require jwread/lib-allure
+
+Then to use it, like in test.php;
+
+	<?php
+
+	require_once 'vendor/autoload.php';
+
+	use \libAllure\Database;
+	use \libAllure\ErrorHandler
+	use \libAllure\Form
+	// ...
+
+	?>
+
+## Adding with a standard PHP include
+
+Copy the contents of `/src/main/php/` to somewhere on your include path, like 
+`/usr/share/php/` on most Linux distributions. So that you have `/usr/share/php/libAllure/ErrorHander.php`, `/usr/share/php/libAllure/Database.php`, etc.
+
+## API
+
+### Database
 Wrapper around **PDO**.
 
 	require_once 'libAllure/Database.php';
@@ -23,8 +45,7 @@ Wrapper around **PDO**.
 
 	var_dump($results->fetchAll());
 
-ErrorHandler.php
----
+### ErrorHandler
 Custom error handler that complains at the slightest thing, makes debugging nice and easy.
 
 	require_once 'libAllure/ErrorHandler.php';
@@ -36,8 +57,7 @@ Custom error handler that complains at the slightest thing, makes debugging nice
 
 	throw new Exception('This is a test');
 
-Form.php
----
+### Form
 Custom form handling code. 
 
 	require_once 'libAllure/Form.php';
@@ -67,8 +87,7 @@ Custom form handling code.
 
 	$tpl->displayForm($f);
 
-Template.php
----
+### Template
 Just a nice wrapper around Smarty2/3, that adds in a few compatibility functions to easily switch between the versions.
 
 	require_once 'libAllure/Template.php';

@@ -19,13 +19,13 @@
 
 namespace libAllure;
 
-if (defined(__FILE__)) { return; } else { define(__FILE__, true); }
-
 class User {
 	private $privs = array();
 	private $usergroups = array();
 	private $data = array();
 	private $username;
+
+	public static $uniqueField = 'username';
 
 	private function __construct($username) {
 		$this->username = $username;
@@ -250,7 +250,7 @@ SQL;
 	}
 
 	private function updateAttributeCache() {
-		$this->data = AuthBackend::getBackend()->getUserAttributes($this->username);
+		$this->data = AuthBackend::getBackend()->getUserAttributes($this->username, self::$uniqueField);
 	}
 
 	public function __toString() {
