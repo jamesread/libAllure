@@ -517,13 +517,13 @@ abstract class Element implements \JsonSerializable {
 	}
 
 	public function jsonSerialize() {
-		return [
+		return array(
 			'name' => $this->name,
 			'caption' => $this->caption,
 			'description' => $this->description,
 			'required' => $this->required,
 			'type' => $this->getType(),
-		];
+		);
 	}
 }
 
