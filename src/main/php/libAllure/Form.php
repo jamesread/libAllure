@@ -998,6 +998,14 @@ class ElementDate extends Element {
 		}
 	}
 
+	public function getValue() {
+		if (empty($this->value)) {
+			return null;
+		} else {
+			return $this->value;
+		}
+	}
+
 	public function render() {
 		$today = new \DateTime();
 		$today = $today->format('Y-m-d');
