@@ -979,8 +979,14 @@ class ElementAutoSelect extends ElementSelect {
 
 
 class ElementDate extends Element {
+	protected $allowEmpty = true;
+
 	protected function validateInternals() {
 		$val = $this->getValue();
+
+		if ($this->allowEmpty && empty($val)) {
+			return;
+		}
 
 		$mathes = array();
 		$res = preg_match_all('#\d{4}-\d{2}-\d{2}#', $val, $matches); 
