@@ -50,7 +50,7 @@ class Template extends \Smarty {
 			$this->compile_dir = $cacheDir;
 		}
 
-		$this->template_dir = $templateDir;
+		$this->addTemplateDir($templateDir);
 		$this->addTemplateDir(__DIR__ . '/templates/'); 
 
 //		$this->registerFunction('getContent', 'tplGetContent');
