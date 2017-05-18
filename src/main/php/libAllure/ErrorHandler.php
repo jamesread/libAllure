@@ -137,6 +137,9 @@ class ErrorHandler {
 				echo '<tr><th>ID</th><th>File</th><th>Line</th><th>Class</th><th>function call</th></tr>';
 				foreach ($stacktrace as $id => $point) {
 					$point['class'] = (isset($point['class']) ? $point['class'] : '(none)');
+					$point['file'] = (isset($point['file']) ? $point['file'] : '(none)');
+					$point['line'] = (isset($point['line']) ? $point['line'] : '(none)');
+
 					echo '<tr><td>' . (sizeof($stacktrace) - $id) . '</td><td>' . $point['file'] . '</td><td>' . $point['line'] . '</td><td>' . $point['class'] . '</td><td>' . $point ['function'] . '(';
 
 					if (isset($point['args'])) {

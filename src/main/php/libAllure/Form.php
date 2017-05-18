@@ -517,13 +517,13 @@ abstract class Element implements \JsonSerializable {
 	}
 
 	public function jsonSerialize() {
-		return [
+		return array(
 			'name' => $this->name,
 			'caption' => $this->caption,
 			'description' => $this->description,
 			'required' => $this->required,
 			'type' => $this->getType(),
-		];
+		);
 	}
 }
 
@@ -979,8 +979,14 @@ class ElementAutoSelect extends ElementSelect {
 
 
 class ElementDate extends Element {
+	protected $allowEmpty = true;
+
 	protected function validateInternals() {
 		$val = $this->getValue();
+
+		if ($this->allowEmpty && empty($val)) {
+			return;
+		}
 
 		$mathes = array();
 		$res = preg_match_all('#\d{4}-\d{2}-\d{2}#', $val, $matches); 
@@ -989,6 +995,14 @@ class ElementDate extends Element {
 
 		if (!$res || $ts < 0 || !$ts) {
 			$this->setValidationError('That is a not a valid date.');
+		}
+	}
+
+	public function getValue() {
+		if (empty($this->value)) {
+			return null;
+		} else {
+			return $this->value;
 		}
 	}
 

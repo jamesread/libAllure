@@ -2,7 +2,7 @@ target
 .buildpath
 .project
 .settings
+vendor/
 composer.lock
 .buildid
 **/*.swp
-/vendor/
