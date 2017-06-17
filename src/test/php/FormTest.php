@@ -9,6 +9,7 @@ use \libAllure\Element;
 use \libAllure\ElementSelect;
 use \libAllure\ElementInput;
 use \libAllure\ElementHtml;
+use \libAllure\ElementInputRegex;
 
 class EmptyForm extends \libAllure\Form {
 	public function __construct($name) {
@@ -121,6 +122,29 @@ class FormTest extends PHPUnit_Framework_TestCase {
 		$this->assertContains('foo', $f->getElementValue('test'));
 
 	}
+
+	public function testIdentifier() {
+		$el = new ElementInputRegex('name', 'Name');
+		$el->setPatternToIdentifier();
+
+		$el->setValue('foobar');
+		$el->validateInternals();
+		$this->assertNull($el->getValidationError());
+
+		$el->setValue('FOOBAR');
+		$el->validateInternals();
+		$this->assertNull($el->getValidationError());
+
+		$el->setValue('fBAR10');
+		$el->validateInternals();
+		$this->assertNull($el->getValidationError());
+
+		$el->setValue('1Foobar');
+		$el->validateInternals();
+		$this->assertNotNull($el->getValidationError());
+
+	}
+
 }
 
 ?>

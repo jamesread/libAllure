@@ -638,7 +638,7 @@ class ElementInputRegex extends ElementInput {
 	}
 
 	public function setPatternToIdentifier() {
-		$this->setPattern('#^[a-z_]+$#i', 'letters and underscores');
+		$this->setPattern('#^[a-z][a-z_0-9]+$#i', 'letters and underscores');
 	}
 
 	public function setPatternToTime() {
