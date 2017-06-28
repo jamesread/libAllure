@@ -31,7 +31,7 @@ class IncludePath {
 	}
 
 	public static function add_libAllure() {
-		self::add(dirname(realpath(dirname(__FILE__) . '/../'))); 
+		self::add(dirname(realpath(dirname(__FILE__) . '/'))); 
 	}
 
 	public static function get() {
