@@ -23,15 +23,19 @@ if (defined(__FILE__)) { return; } else { define(__FILE__, true); }
 
 class IncludePath {
 	public static function add($path) {
-		Util::add_include_path($path);
+		self::add_include_path($path);
 	}
 
 	public static function add_include_path($path) {
 		set_include_path(get_include_path() . PATH_SEPARATOR . $path);
 	}
 
-	public static function add_libAllure_include_path() {
-		Util::add(dirname(realpath(dirname(__FILE__) . '/../'))); 
+	public static function add_libAllure() {
+		self::add(dirname(realpath(dirname(__FILE__) . '/../'))); 
+	}
+
+	public static function get() {
+		return get_include_path();
 	}
 }
 

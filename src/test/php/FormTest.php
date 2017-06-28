@@ -135,7 +135,7 @@ class FormTest extends PHPUnit_Framework_TestCase {
 		$el->validateInternals();
 		$this->assertNull($el->getValidationError());
 
-		$el->setValue('fBAR10');
+		$el->setValue('fFOOBAR10');
 		$el->validateInternals();
 		$this->assertNull($el->getValidationError());
 
