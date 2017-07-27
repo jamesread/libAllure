@@ -85,10 +85,6 @@ class FilterTracker {
         $ret = array();                                                            
                                                                                    
         foreach ($this->vars as $name => $value) {
-			if ($this->types[$name] == "hidden") {
-				continue;	
-			}
-
             $ret[] = array(                                                        
                 'name' => $name,                                                   
                 'isUsed' => $this->isUsed($name),                                  
@@ -103,10 +99,6 @@ class FilterTracker {
     }                                                                           
                                                                                 
     public function getValue($name) {                                           
-		if ($this->types[$name] == 'hidden') {
-			return $this->hiddenValues($name);
-		}
-
         if ($this->isUsed($name)) {                                             
             if ($this->types[$name] == "bool") {                                
                 return true;                                                    
