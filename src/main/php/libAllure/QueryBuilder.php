@@ -97,6 +97,14 @@ class QueryBuilder {
 	}
 
 	public function whereEquals($field, $value) {
+		$this->whereEqualsParam($field, $value);
+	}
+
+	public function whereEqualsParam($field, $value) {
+		$this->where($field, '=', $this->paramName($value));
+	}
+
+	public function whereEqualsValue($field, $value) {
 		$this->where($field, '=', $this->quoteValue($value));
 	}
 
@@ -108,8 +116,24 @@ class QueryBuilder {
 		$this->where($field, 'NOT', 'NULL');
 	}
 
+	public function whereLikeValue($field, $value) {
+		$this->where($field, 'LIKE', $this->quoteValue('%' . $value . '%'));
+	}
+
+	public function whereLikeParam($field,  $value) {
+		$this->where($field, 'LIKE', $this->quoteValue('%' . $this->paramName($value) . '%'));
+	}
+
 	public function whereSubquery($field, $operator, QueryBuilder $subquery) {
 		$this->where($field, $operator, '(' . $subquery->build() . ')');
+	}
+
+	private function paramName($name) {
+		if ($name[0] != ':') {
+			$name = ':' . $name;
+		}
+
+		return $name;
 	}
 
 	private function quoteValue($value) {
