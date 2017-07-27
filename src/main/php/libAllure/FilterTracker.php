@@ -25,6 +25,7 @@ class FilterTracker {
     private $filters = array();                                                    
     private $vars = array();                                                       
 	private $options = array();
+	private $hiddenVales = array();
                                                                                    
     private function add($name, $type, $label = null, $requestVar = null) {        
         if ($requestVar == null) {                                                 
@@ -40,6 +41,11 @@ class FilterTracker {
         $this->labels[$name] = $label;                                             
         $this->options[$name] = null;                                                    
     }                                                                              
+
+	public function setHiddenValue($name, $value, $requestVar = null) {
+		$this->add($name, 'hidden', $name, $requestVar);
+		$this->hiddenValues[$name] = $value;
+	}
                                                                                    
     public function addInt($name, $label = null, $requestVar = null) {             
         $this->add($name, 'int', $label, $requestVar);                             
@@ -78,7 +84,11 @@ class FilterTracker {
     public function getAll() {                                                     
         $ret = array();                                                            
                                                                                    
-        foreach ($this->vars as $name => $value) {                                 
+        foreach ($this->vars as $name => $value) {
+			if ($this->types[$name] == "hidden") {
+				continue;	
+			}
+
             $ret[] = array(                                                        
                 'name' => $name,                                                   
                 'isUsed' => $this->isUsed($name),                                  
@@ -93,6 +103,10 @@ class FilterTracker {
     }                                                                           
                                                                                 
     public function getValue($name) {                                           
+		if ($this->types[$name] == 'hidden') {
+			return $this->hiddenValues($name);
+		}
+
         if ($this->isUsed($name)) {                                             
             if ($this->types[$name] == "bool") {                                
                 return true;                                                    
