@@ -36,8 +36,8 @@ class QueryBuilderTest extends PHPUnit_Framework_TestCase {
 		$qb->from('users');
 		$qb->fields('forename', 'surname');
 		$qb->whereGt('age', 25);
-		$qb->whereEquals('forename', 'bob');
-		$qb->whereEquals('surname', 'exampleton');
+		$qb->whereEqualsValue('forename', 'bob');
+		$qb->whereEqualsValue('surname', 'exampleton');
 		$qb->whereNotNull('wallet');
 		$qb->orderBy('id');
 
