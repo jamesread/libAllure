@@ -196,7 +196,7 @@ abstract class Form {
 			$this->addElement(new ElementHidden($roElementName, null, $value));
 		}
 
-		return $this->addElement(new ElementHtml(uniqid(), null, '<label>' . $title . '</label>' . $value . ''));
+		return $this->addElement(new ElementHtml(uniqid(), null, '<div class = "labelHolder"><label>' . $title . '</label></div><div class = "elementHolder">' . $value . '</div>'));
 	}
 
 	public function addElementDetached(Element $el) {
@@ -551,7 +551,7 @@ class ElementRadio extends Element {
 			$strOptions .= sprintf('<li><label><input type = "radio" name = "%s" value = "%s" %s />%s</label></li>', $this->name, $key, $sel, $val);
 		}
 
-		return sprintf('<label>%s</label><ul>%s</ul>', $this->caption, $strOptions);
+		return sprintf('<div class = "labelHolder"><label>%s</label></div><div class = "elementHolder"><ul>%s</ul></div>', $this->caption, $strOptions);
 	}
 }
 
@@ -569,7 +569,7 @@ class ElementTextbox extends Element {
 		$value = stripslashes($value);
 		$value = strip_tags($value);
 
-		return sprintf('<label for = "%s">%s</label><textarea id = "%s" name = "%s" rows = "8" cols = "80">%s</textarea>', $this->name, $this->caption, $this->name, $this->name, $this->value);
+		return sprintf('<div class = "labelHolder"><label for = "%s">%s</label></div><div class = "elementHolder"><textarea id = "%s" name = "%s" rows = "8" cols = "80">%s</textarea></div>', $this->name, $this->caption, $this->name, $this->name, $this->value);
 	}
 }
 
@@ -595,7 +595,7 @@ class ElementInput extends Element {
 			}
 		}
 
-		return sprintf('<label ' . $classes . 'for = "%s">%s</label><input %s id = "%s" name = "%s" value = "%s" />%s', $this->name, $this->caption, $onChange, $this->name, $this->name, $value, implode(', ', $suggestedValues));
+		return sprintf('<div class = "labelHolder"><label ' . $classes . 'for = "%s">%s</label></div><div class = "elementHolder"><input %s id = "%s" name = "%s" value = "%s" />%s</div>', $this->name, $this->caption, $onChange, $this->name, $this->name, $value, implode(', ', $suggestedValues));
 	}
 
 	public function validateInternals() {
@@ -679,7 +679,7 @@ class ElementCheckbox extends Element {
 
 	public function render() {
 		$value = ($this->value) ? 'checked = "checked"' : '';
-		return sprintf('<label for = "%s">%s</label><input value = "1" type = "checkbox" id = "%s" name = "%s" %s />', $this->name, $this->caption, $this->name, $this->name, $value);
+		return sprintf('<div class = "labelHolder"><label for = "%s">%s</label></div><div class = "elementHolder"><input value = "1" type = "checkbox" id = "%s" name = "%s" %s /></div>', $this->name, $this->caption, $this->name, $this->name, $value);
 	}
 }
 
@@ -703,12 +703,12 @@ class ElementMultiCheck extends Element {
 	}
 
 	public function render() {
-		$ret = '<label>' . $this->caption . '</label><ul>';
+		$ret = '<div class = "labelHolder"><label>' . $this->caption . '</label></div><div class = "elementHolder"><ul>';
 		foreach ($this->values as $key => $label) {
 			$checked = (in_array($key, $this->getValue())) ? 'checked = "checked" ' : '';
 			$ret .= sprintf('<li><input type = "checkbox" name = "%s[]" value = "%s" %s /> <label for = "%s">%s</label></li>', $this->name, $key, $checked, $this->name, $label);
 		}
-		$ret .= '</ul>';
+		$ret .= '</ul></div>';
 
 		return $ret;
 	}
@@ -868,7 +868,7 @@ class ElementFile extends Element {
 	}
 
 	public function render() {
-		return sprintf('<label for = "%s">%s</label><input name = "%s" type = "file" />', $this->name, $this->caption, $this->name);
+		return sprintf('<div class = "labelHolder"><label for = "%s">%s</label></div><div class = "elementHolder"><input name = "%s" type = "file" /></div>', $this->name, $this->caption, $this->name);
 	}
 }
 
@@ -938,7 +938,7 @@ class ElementSelect extends Element {
 			$htmlName .= '[]';
 		}
 
-		return sprintf('<label>%s</label><select id = "%s" %s %s %s name = "%s">%s</select>' . $suggestedValues, $this->caption, $htmlName, $onChange, $size, $multiple, $htmlName, $strOptions);
+		return sprintf('<div class = "labelHolder"><label>%s</label></div><div class = "elementHolder"><select id = "%s" %s %s %s name = "%s">%s</select>' . $suggestedValues . '</div>', $this->caption, $htmlName, $onChange, $size, $multiple, $htmlName, $strOptions);
 	}
 
 	public function setSize($count) {
@@ -958,7 +958,7 @@ class ElementAutoSelect extends ElementSelect {
 	public function render() {
 		$ret = '';
 
-		$ret .= '<label>' . $this->caption . '</label><input id = "' . $this->name . '" name = "' . $this->name . '" value = "' . $this->value . '">'. '</input>';
+		$ret .= '<div class = "labelHolder"><label>' . $this->caption . '</label></div><div class = "elementHolder"><input id = "' . $this->name . '" name = "' . $this->name . '" value = "' . $this->value . '">'. '</input></div>';
 
 		$acId = uniqid();
 		$ret .= '<script type = "text/javascript">var ac' . $acId . ' = [';
@@ -1011,7 +1011,7 @@ class ElementDate extends Element {
 		$today = $today->format('Y-m-d');
 
 		$buf = null;
-		$buf .= sprintf('<label for = "%s">%s</label><input id = "%s" name = "%s" value = "%s" /><span class = "dummyLink" onclick = "javascript:document.getElementById(\'%s\').value=\'%s\'">Today</span>', $this->name, $this->caption, $this->name, $this->name, $this->value, $this->name, $today);
+		$buf .= sprintf('<div class = "labelHolder"><label for = "%s">%s</label></div><div class = "elementHolder"><input id = "%s" name = "%s" value = "%s" /><span class = "dummyLink" onclick = "javascript:document.getElementById(\'%s\').value=\'%s\'">Today</span></div>', $this->name, $this->caption, $this->name, $this->name, $this->value, $this->name, $today);
 		$buf .= <<<JS
 <script type = "text/javascript">
 	$("#{$this->name}").datepicker({
@@ -1124,7 +1124,7 @@ class ElementPassword extends Element {
 	}
 
 	public function render() {
-		return sprintf('<label for = "%s">%s</label><input %s id = "%s" name = "%s" type = "password" />', $this->name, $this->caption, (($this->required == true) ? 'class = "required"' : null), $this->name, $this->name);
+		return sprintf('<div class = "labelHolder"><label for = "%s">%s</label></div><div class = "elementHolder"><input %s id = "%s" name = "%s" type = "password" /></div>', $this->name, $this->caption, (($this->required == true) ? 'class = "required"' : null), $this->name, $this->name);
 	}
 }
 
