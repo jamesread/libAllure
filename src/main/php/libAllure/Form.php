@@ -196,7 +196,11 @@ abstract class Form {
 			$this->addElement(new ElementHidden($roElementName, null, $value));
 		}
 
-		return $this->addElement(new ElementHtml(uniqid(), null, '<div class = "labelHolder"><label>' . $title . '</label></div><div class = "elementHolder">' . $value . '</div>'));
+		if (empty($value)) {
+			$value = '<em>not set</em>';
+		}
+
+		return $this->addElement(new ElementHtml(uniqid(), null, '<fieldset><div class = "labelHolder"><label>' . $title . '</label></div><div class = "elementHolder">' . $value . '</div></fieldset>'));
 	}
 
 	public function addElementDetached(Element $el) {
