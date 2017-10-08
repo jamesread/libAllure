@@ -69,7 +69,7 @@ class ErrorHandler {
  	 * array).
 	 */
 	protected function render($trigger, $message, $code = null, $file = null, $line = null, $stacktrace = null) {
-		error_log("trigger: $trigger. message: $message. code: $code. file: $file. line: $line. trace: $stacktrace ");
+		error_log("trigger: $trigger. message: $message. code: $code. file: $file. line: $line ");
 
 		if (class_exists('Logger', false)) {
 			$metadata = '';
