@@ -32,6 +32,19 @@ class InflectorTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('this_is_the_test', Inflector::underscore('this is the test'));
 		$this->assertEquals('this_is_the_test', Inflector::underscore('thisIsTheTest'));
 	}
+
+	public function testSes() {
+		$this->assertEquals('bus', Inflector::singular('buses'));
+	}
+
+	public function testQuantities() {
+		$this->assertEquals('cake', Inflector::quantify('cakes', 1));
+		$this->assertEquals('cakes', Inflector::quantify('cake', 10));
+	}
+
+	public function testForcePlural() {
+		$this->assertEquals('buses', Inflector::pluralize('bus', true));
+	}
 }
 
 ?>

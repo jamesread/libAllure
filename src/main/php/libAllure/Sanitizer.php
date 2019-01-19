@@ -143,6 +143,8 @@ class Sanitizer {
 		if (!is_numeric($content)) {
 			$this->triggerFailFilter('Content is not numeric');	
 		}
+
+		return $content;
 	}
 
 	public function filterString($name) {

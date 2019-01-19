@@ -41,6 +41,10 @@ class SanitizerTest extends PHPUnit_Framework_TestCase {
 		$_REQUEST['test'] = 'Waffles';
 		$this->assertEquals('Bananas', $this->sanitizer->filterEnum('test', array('Apples', 'Bananas', 'Chestnuts'), 'Bananas'));
 	}
+
+	public function testFilterNumeric() {
+		$this->assertNotNull($this->sanitizer->filterNumeric('0101'));
+	}	
 }
 
 ?>

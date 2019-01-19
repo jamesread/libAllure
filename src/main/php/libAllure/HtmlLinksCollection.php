@@ -21,7 +21,7 @@ namespace libAllure;
 
 if (defined(__FILE__)) { return; } else { define(__FILE__, true); }
 
-class HtmlLinksCollection implements \Iterator {
+class HtmlLinksCollection implements \Iterator, \Countable {
 	private $title;
 	private $collection = array();
 	private $iteratorPosition = 0; // Dont use the collection pointer
@@ -85,6 +85,9 @@ class HtmlLinksCollection implements \Iterator {
 		return count($this->collection);
 	}
 
+	public function count() {
+		return $this->getCount();
+	}
 
 	public function addIfPriv($priv, $url, $title, $iconUrl = null, $containerClass = null) {
 		$this->addIf(Session::hasPriv($priv), $url, $title, $iconUrl, $containerClass);
@@ -122,7 +125,7 @@ class HtmlLinksCollection implements \Iterator {
 			'iconUrl' => null,
 			'enabled' => true,
 			'containerClass'=> null,
-			'children' => null,
+			'children' => array(),
 			'separator' => true,
 		);
 	}
