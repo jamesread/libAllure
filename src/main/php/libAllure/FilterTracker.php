@@ -70,6 +70,10 @@ class FilterTracker {
 	}
                                                                                    
     public function isUsed($name) {                                                
+		if (!isset($this->vars[$name])) {
+			return false;
+		}
+
         if (isset($_REQUEST[$this->vars[$name]])) {                                
             if ($this->types[$name] != 'bool' && empty($_REQUEST[$this->vars[$name]])) {
                 return false;                                                      
@@ -86,7 +90,8 @@ class FilterTracker {
                                                                                    
         foreach ($this->vars as $name => $value) {
             $ret[] = array(                                                        
-                'name' => $name,                                                   
+                'name' => $name,                                                  
+				'varName' => $this->vars[$name],
                 'isUsed' => $this->isUsed($name),                                  
                 'type' => $this->types[$name],                                     
                 'value' => $this->getValue($name),                                 
@@ -103,7 +108,7 @@ class FilterTracker {
             if ($this->types[$name] == "bool") {                                
                 return true;                                                    
             } else {                                                            
-                return $_REQUEST[$name];                                        
+                return $_REQUEST[$this->vars[$name]];
             }                                                                   
         }                                                                       
                                                                                 
