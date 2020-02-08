@@ -145,6 +145,16 @@ abstract class Form {
 		return Sanitizer::getInstance()->escapeStringForClean($this->getElement($elementName)->getValue());
 	}
 
+	public function bindStatementValues(&$stmt, $names) {
+		foreach ($names as $paramName => $elementName) {
+			if (is_numeric($paramName)) {
+				$paramName = $elementName;
+			}
+
+			$stmt->bindValue(':' . $paramName, $this->getElementValue($elementName));
+		}
+	}
+
 	public function bindElementToStatement(&$stmt, $elementName, $parameterName = null) {
 		$el = $this->getElement($elementName);
 
