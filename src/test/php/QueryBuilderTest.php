@@ -4,8 +4,9 @@ require_once 'common.php';
 require_once 'libAllure/QueryBuilder.php';
 
 use \libAllure\QueryBuilder;
+use \PHPUnit\Framework\TestCase;
 
-class QueryBuilderTest extends PHPUnit_Framework_TestCase {
+class QueryBuilderTest extends TestCase {
 	public function testSelect() {
 		$qb = new QueryBuilder('select');
 		$qb->fields('u.username', 'u.password');

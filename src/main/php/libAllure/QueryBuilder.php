@@ -2,290 +2,322 @@
 
 namespace libAllure;
 
-class QueryBuilder {
-	private $fields = array();
-	private $verb;
-	private $from;
-	private $orderBy = array();
-	private $where = array();
-	private $group = null;
-	private $joins = array();
-	private $joinConditions = array();
+class QueryBuilder
+{
+    private $fields = array();
+    private $verb;
+    private $from;
+    private $orderBy = array();
+    private $where = array();
+    private $group = null;
+    private $joins = array();
+    private $joinConditions = array();
 
-	private $lastPrefix = null;
-	private $lastJoinedTabke = null;
+    private $lastPrefix = null;
+    private $lastJoinedTabke = null;
 
-	public function __construct($verb = 'SELECT') {
-		$verb = strtoupper($verb);
-		
-		$this->verb = $verb;
-	}
+    public function __construct($verb = 'SELECT')
+    {
+        $verb = strtoupper($verb);
 
-	public function orderBy() {
-		foreach (func_get_args() as $arg) {
-			$arg = $this->addFieldPrefix($arg);
+        $this->verb = $verb;
+    }
 
-			array_push($this->orderBy, $arg);
-		}
+    public function orderBy()
+    {
+        foreach (func_get_args() as $arg) {
+            $arg = $this->addFieldPrefix($arg);
 
-		return $this;
-	}
+            array_push($this->orderBy, $arg);
+        }
 
-	public function from($from, $prefix = null) {
-		if ($prefix == null) {
-			$prefix = substr($from, 0, 1);
-		}
+        return $this;
+    }
 
-		$this->from = array( 
-			"prefix" => $prefix,
-			"table" => $from
-		);
+    public function from($from, $prefix = null)
+    {
+        if ($prefix == null) {
+            $prefix = substr($from, 0, 1);
+        }
 
-		$this->lastPrefix = $prefix;
+        $this->from = array(
+            "prefix" => $prefix,
+            "table" => $from
+        );
 
-		return $this;
-	}
+        $this->lastPrefix = $prefix;
 
-	public function fields() {
-		foreach (func_get_args() as $arg) {
-			if (is_array($arg)) {
-				$field = array(
-					'field' => $arg[0],
-					'alias' => $arg[1]
-				);
-			} else {
-				$field = array(
-					'field' => $arg,
-					'alias' => null
-				);
-			}
+        return $this;
+    }
 
-			$field['field'] = $this->addFieldPrefix($field['field']);
-		
-			array_push($this->fields, $field);
-		}
+    public function fields()
+    {
+        foreach (func_get_args() as $arg) {
+            if (is_array($arg)) {
+                $field = array(
+                    'field' => $arg[0],
+                    'alias' => $arg[1]
+                );
+            } else {
+                $field = array(
+                    'field' => $arg,
+                    'alias' => null
+                );
+            }
 
-		return $this;
-	}
+            $field['field'] = $this->addFieldPrefix($field['field']);
 
-	protected function addFieldPrefix($field) {
-		if (strpos($field, '!') !== FALSE) {
-			return str_replace('!', '', $field);
-		}
+            array_push($this->fields, $field);
+        }
 
-		if (strpos($field, '.') === FALSE) {
-			$prefix = $this->lastPrefix . '.';
-		} else {
-			$prefix = '';
-		}
+        return $this;
+    }
 
-		return $prefix . $field;
-	}
+    protected function addFieldPrefix($field)
+    {
+        if (strpos($field, '!') !== false) {
+            return str_replace('!', '', $field);
+        }
 
-	public function where($field, $operator, $value) {
-		$field = $this->addFieldPrefix($field);
+        if (strpos($field, '.') === false) {
+            $prefix = $this->lastPrefix . '.';
+        } else {
+            $prefix = '';
+        }
 
-		$this->where[] = array(
-			'field' => $field,
-			'operator' => $operator,
-			'value' => $value
-		);
-	}
+        return $prefix . $field;
+    }
 
-	public function whereGt($field, $value) {
-		$this->where($field, '>', $this->quoteValue($value));
-	}
+    public function where($field, $operator, $value)
+    {
+        $field = $this->addFieldPrefix($field);
 
-	public function whereEquals($field, $value) {
-		$this->whereEqualsParam($field, $value);
-	}
+        $this->where[] = array(
+            'field' => $field,
+            'operator' => $operator,
+            'value' => $value
+        );
+    }
 
-	public function whereEqualsParam($field, $value) {
-		$this->where($field, '=', $this->paramName($value));
-	}
+    public function whereGt($field, $value)
+    {
+        $this->where($field, '>', $this->quoteValue($value));
+    }
 
-	public function whereEqualsValue($field, $value) {
-		$this->where($field, '=', $this->quoteValue($value));
-	}
+    public function whereEquals($field, $value)
+    {
+        $this->whereEqualsParam($field, $value);
+    }
 
-	public function whereNotEquals($field, $value) {
-		$this->where($field, '!=', $this->quoteValue($value));
-	}
+    public function whereEqualsParam($field, $value)
+    {
+        $this->where($field, '=', $this->paramName($value));
+    }
 
-	public function whereNotNull($field) {
-		$this->where($field, 'NOT', 'NULL');
-	}
+    public function whereEqualsValue($field, $value)
+    {
+        $this->where($field, '=', $this->quoteValue($value));
+    }
 
-	public function whereLikeValue($field, $value) {
-		$this->where($field, 'LIKE', $this->quoteValue('%' . $value . '%'));
-	}
+    public function whereNotEquals($field, $value)
+    {
+        $this->where($field, '!=', $this->quoteValue($value));
+    }
 
-	public function whereLikeParam($field,  $value) {
-		$this->where($field, 'LIKE', $this->quoteValue('%' . $this->paramName($value) . '%'));
-	}
+    public function whereNotNull($field)
+    {
+        $this->where($field, 'NOT', 'NULL');
+    }
 
-	public function whereSubquery($field, $operator, QueryBuilder $subquery) {
-		$this->where($field, $operator, '(' . $subquery->build() . ')');
-	}
+    public function whereLikeValue($field, $value)
+    {
+        $this->where($field, 'LIKE', $this->quoteValue('%' . $value . '%'));
+    }
 
-	private function paramName($name) {
-		if ($name[0] != ':') {
-			$name = ':' . $name;
-		}
+    public function whereLikeParam($field, $value)
+    {
+        $this->where($field, 'LIKE', $this->quoteValue('%' . $this->paramName($value) . '%'));
+    }
 
-		return $name;
-	}
+    public function whereSubquery($field, $operator, QueryBuilder $subquery)
+    {
+        $this->where($field, $operator, '(' . $subquery->build() . ')');
+    }
 
-	private function quoteValue($value) {
-		if (is_numeric($value)) {
-			return $value;
-		} else {
-			return '"' . $value . '"';
-		}
-	}
+    private function paramName($name)
+    {
+        if ($name[0] != ':') {
+            $name = ':' . $name;
+        }
 
-	public function join($tbl, $alias = null) {
-		return $this->leftJoin($tbl, $alias);
-	}
+        return $name;
+    }
 
-	public function leftJoin($tbl, $alias = null) {
-		return $this->joinImpl('LEFT', $tbl, $alias);
-	}
+    private function quoteValue($value)
+    {
+        if (is_numeric($value)) {
+            return $value;
+        } else {
+            return '"' . $value . '"';
+        }
+    }
 
-	public function joinImpl($direction, $tbl, $alias = null) {
-		if ($alias == null) {
-			$alias = substr($tbl, 0, 1);
-		}
+    public function join($tbl, $alias = null)
+    {
+        return $this->leftJoin($tbl, $alias);
+    }
 
-		$this->joins[$tbl] = array(
-			'direction' => $direction,
-			'table' => $tbl,
-			'alias' => $alias
-		);
+    public function leftJoin($tbl, $alias = null)
+    {
+        return $this->joinImpl('LEFT', $tbl, $alias);
+    }
 
-		$this->lastJoinedTable = $tbl;
+    public function joinImpl($direction, $tbl, $alias = null)
+    {
+        if ($alias == null) {
+            $alias = substr($tbl, 0, 1);
+        }
 
-		return $this;
-	}
+        $this->joins[$tbl] = array(
+            'direction' => $direction,
+            'table' => $tbl,
+            'alias' => $alias
+        );
 
-	public function joinedTable($tbl) {
-		$this->lastJoinedTable = $tbl;
+        $this->lastJoinedTable = $tbl;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	public function on($field, $value) {
-		return $this->onImpl($field, '=', $value);
-	}
+    public function joinedTable($tbl)
+    {
+        $this->lastJoinedTable = $tbl;
 
-	public function onGt($field, $value) {
-		return $this->onImpl($field, '>', $value);
-	}
+        return $this;
+    }
 
-	public function onImpl($field, $operator, $value) {
-		$this->joinConditions[$this->lastJoinedTable][] = array(
-			'field' => $field,
-			'operator' => $operator,
-			'value' => $value
-		);
+    public function on($field, $value)
+    {
+        return $this->onImpl($field, '=', $value);
+    }
 
-		return $this;
-	}
+    public function onGt($field, $value)
+    {
+        return $this->onImpl($field, '>', $value);
+    }
 
-	public function groupBy($field) {
-		return $this->group($field);
-	}
+    public function onImpl($field, $operator, $value)
+    {
+        $this->joinConditions[$this->lastJoinedTable][] = array(
+            'field' => $field,
+            'operator' => $operator,
+            'value' => $value
+        );
 
-	public function group($field) {
-		$this->group = $field;
+        return $this;
+    }
 
-		return $this;
-	}
+    public function groupBy($field)
+    {
+        return $this->group($field);
+    }
 
-	private function buildFields() {
-		$clauses = array();
+    public function group($field)
+    {
+        $this->group = $field;
 
-		foreach ($this->fields as $field) {
-			if ($field['alias'] == null) {
-				$clauses[] = $field['field'];
-			} else {
-				$clauses[] = $field['field'] . ' AS ' . $field['alias'];
-			}
-		}
+        return $this;
+    }
 
-		return implode(', ', $clauses);
-	}
+    private function buildFields()
+    {
+        $clauses = array();
 
-	private function buildOrderBy() {
-		if (empty($this->orderBy)) {
-			return $this->fields[0]['field'];
-		} else {
-			return implode(', ', $this->orderBy);
-		}
-	}
+        foreach ($this->fields as $field) {
+            if ($field['alias'] == null) {
+                $clauses[] = $field['field'];
+            } else {
+                $clauses[] = $field['field'] . ' AS ' . $field['alias'];
+            }
+        }
 
-	private function buildWhere() {
-		$ret = '';
+        return implode(', ', $clauses);
+    }
 
-		if (count($this->where) > 0) {
-			$clauses = array();
+    private function buildOrderBy()
+    {
+        if (empty($this->orderBy)) {
+            return $this->fields[0]['field'];
+        } else {
+            return implode(', ', $this->orderBy);
+        }
+    }
 
-			foreach ($this->where as $clause) {
-				$clauses[] = $clause['field'] . ' ' . $clause['operator'] . ' ' . $clause['value'];
-			}
+    private function buildWhere()
+    {
+        $ret = '';
 
-			$ret = ' WHERE ' . implode(' AND ', $clauses);
-		}
+        if (count($this->where) > 0) {
+            $clauses = array();
 
-		return $ret;
-	}
+            foreach ($this->where as $clause) {
+                $clauses[] = $clause['field'] . ' ' . $clause['operator'] . ' ' . $clause['value'];
+            }
 
-	public function buildJoins() {
-		$ret = '';
+            $ret = ' WHERE ' . implode(' AND ', $clauses);
+        }
 
-		foreach ($this->joins as $join) {
-			$ret .= ' ' . $join['direction'] . ' JOIN ' . $join['table'] . ' ' . $join['alias'] . ' ' . $this->buildJoinConditions($join['table']);
-		}
-		
-		return $ret;		
-	}
+        return $ret;
+    }
 
-	public function buildJoinConditions($joinedTable) {
-		$clauses = array();
+    public function buildJoins()
+    {
+        $ret = '';
 
-		foreach ($this->joinConditions[$joinedTable] as $condition) {
-			$clauses[] = $condition['field'] . ' ' . $condition['operator'] . ' ' . $condition['value'];
-		}
+        foreach ($this->joins as $join) {
+            $ret .= ' ' . $join['direction'] . ' JOIN ' . $join['table'] . ' ' . $join['alias'] . ' ' . $this->buildJoinConditions($join['table']);
+        }
 
-		return 'ON '. implode(' AND ', $clauses);
-	}
+        return $ret;
+    }
 
-	public function buildGroup() {
-		if ($this->group == null) {
-			return '';
-		} else {
-			return ' GROUP BY ' . $this->group;
-		}
-	}
+    public function buildJoinConditions($joinedTable)
+    {
+        $clauses = array();
 
-	public function build() {
-		if (!is_array($this->from)) {
-			throw new \Exception("From table not specified");
-		}
+        foreach ($this->joinConditions[$joinedTable] as $condition) {
+            $clauses[] = $condition['field'] . ' ' . $condition['operator'] . ' ' . $condition['value'];
+        }
 
-		if (empty($this->fields)) {
-			throw new \Exception("No fields specified");
-		}
+        return 'ON ' . implode(' AND ', $clauses);
+    }
 
-		$ret = $this->verb . ' ';
-		$ret .= $this->buildFields() . ' FROM ' . $this->from['table'] . ' ';
-		$ret .= $this->from['prefix'] . $this->buildJoins();
-		$ret .= $this->buildWhere();
-		$ret .= $this->buildGroup();
-		$ret .= ' ORDER BY ' . $this->buildOrderBy();
+    public function buildGroup()
+    {
+        if ($this->group == null) {
+            return '';
+        } else {
+            return ' GROUP BY ' . $this->group;
+        }
+    }
 
-		return $ret;
-	}
+    public function build()
+    {
+        if (!is_array($this->from)) {
+            throw new \Exception("From table not specified");
+        }
+
+        if (empty($this->fields)) {
+            throw new \Exception("No fields specified");
+        }
+
+        $ret = $this->verb . ' ';
+        $ret .= $this->buildFields() . ' FROM ' . $this->from['table'] . ' ';
+        $ret .= $this->from['prefix'] . $this->buildJoins();
+        $ret .= $this->buildWhere();
+        $ret .= $this->buildGroup();
+        $ret .= ' ORDER BY ' . $this->buildOrderBy();
+
+        return $ret;
+    }
 }
-
-?>

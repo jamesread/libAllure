@@ -1,4 +1,5 @@
 <?php
+
 /*******************************************************************************
 
   This program is free software; you can redistribute it and/or modify
@@ -19,24 +20,23 @@
 
 namespace libAllure;
 
-if (defined(__FILE__)) { return; } else { define(__FILE__, true); }
+class DatabaseFactory
+{
+    private const DEFAULT_INSTANCE_NAME = 'default';
 
-class DatabaseFactory {
-	const DEFAULT_INSTANCE_NAME = 'default';
+    private static $instances = array();
 
-	private static $instances = array();
+    public static function registerInstance(Database $instance, $name = DatabaseFactory::DEFAULT_INSTANCE_NAME)
+    {
+        self::$instances[$name] = $instance;
+    }
 
-	public static function registerInstance(Database $instance, $name = DatabaseFactory::DEFAULT_INSTANCE_NAME) {
-		self::$instances[$name] = $instance;
-	}
+    public static function getInstance($name = DatabaseFactory::DEFAULT_INSTANCE_NAME)
+    {
+        if (!isset(self::$instances[$name]) || !(self::$instances[$name] instanceof Database)) {
+            throw new \Exception('Database instance not registered under name:' . $name);
+        }
 
-	public static function getInstance($name = DatabaseFactory::DEFAULT_INSTANCE_NAME) {
-		if (!isset(self::$instances[$name]) || !(self::$instances[$name] instanceof Database)) {
-			throw new \Exception('Database instance not registered under name:' . $name);
-		}
-
-		return self::$instances[$name];
-	}
+        return self::$instances[$name];
+    }
 }
-
-?>

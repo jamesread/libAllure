@@ -5,8 +5,9 @@ require_once 'common.php';
 require_once 'libAllure/HtmlLinksCollection.php';
 
 use \libAllure\HtmlLinksCollection;
+use \PHPUnit\Framework\TestCase;
 
-class HtmlLinksCollectionTest extends PHPUnit_Framework_TestCase {
+class HtmlLinksCollectionTest extends TestCase {
 	public function testCount() {
 		$links = new HtmlLinksCollection();
 

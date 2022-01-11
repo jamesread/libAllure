@@ -1,4 +1,5 @@
 <?php
+
 /*******************************************************************************
 
   This program is free software; you can redistribute it and/or modify
@@ -19,24 +20,25 @@
 
 namespace libAllure;
 
-if (defined(__FILE__)) { return; } else { define(__FILE__, true); }
+class IncludePath
+{
+    public static function add($path)
+    {
+        self::addIncludePath($path);
+    }
 
-class IncludePath {
-	public static function add($path) {
-		self::add_include_path($path);
-	}
+    public static function addIncludePath($path)
+    {
+        set_include_path(get_include_path() . PATH_SEPARATOR . $path);
+    }
 
-	public static function add_include_path($path) {
-		set_include_path(get_include_path() . PATH_SEPARATOR . $path);
-	}
+    public static function addLibAllure()
+    {
+        self::add(dirname(realpath(dirname(__FILE__) . '/')));
+    }
 
-	public static function add_libAllure() {
-		self::add(dirname(realpath(dirname(__FILE__) . '/'))); 
-	}
-
-	public static function get() {
-		return get_include_path();
-	}
+    public static function get()
+    {
+        return get_include_path();
+    }
 }
-
-?>

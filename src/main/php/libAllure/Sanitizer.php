@@ -1,4 +1,5 @@
 <?php
+
 /*******************************************************************************
 
   This program is free software; you can redistribute it and/or modify
@@ -19,207 +20,235 @@
 
 namespace libAllure;
 
-if (defined(__FILE__)) { return; } else { define(__FILE__, true); }
+class Sanitizer
+{
+    public $filterAllowUndefined = true;
 
-class Sanitizer {
-	public $filterAllowUndefined = true;
+    private const INPUT_GET = 1;
+    private const INPUT_POST = 2;
+    private const INPUT_REQUEST = 3;
+    private const INPUT_SERVER = 4;
+    private const INPUT_LITERAL = 5;
 
-	const INPUT_GET = 1;
-	const INPUT_POST = 2;
-	const INPUT_REQUEST = 3;
-	const INPUT_SERVER = 4;
-	const INPUT_LITERAL = 5;
+    public const FORMAT_FOR_DB = 1;
+    public const FORMAT_FOR_HTML = 2;
+    public const FORMAT_FOR_ALL = 64;
 
-	const FORMAT_FOR_DB = 1;
-	const FORMAT_FOR_HTML = 2;
-	const FORMAT_FOR_ALL = 64;
+    private $inputSource = self::INPUT_REQUEST;
+    private $variableNamePrefixes = array ('form');
+    private static $instance;
 
-	private $inputSource = self::INPUT_REQUEST;
-	private $variableNamePrefixes = array ('form');
-	private static $instance;
+    public static function getInstance()
+    {
+        if (self::$instance == null) {
+            self::$instance = new Sanitizer();
+        }
 
-	public static function getInstance() {
-		if (self::$instance == null) {
-			self::$instance = new Sanitizer();
-		}
+        return self::$instance;
+    }
 
-		return self::$instance;
-	}
+    public function triggerFailFilter($message)
+    {
+        throw new \Exception($message);
+    }
 
-	public function triggerFailFilter($message) {
-		throw new \Exception($message);
-	}
+    public function setInputSource($inputSource)
+    {
+        $this->inputSource = $inputSource;
+    }
 
-	public function setInputSource($inputSource) {
-		$this->inputSource = $inputSource;
-	}
+    private function getInput($name)
+    {
+        switch ($this->inputSource) {
+            case self::INPUT_GET:
+                $source = $_GET;
+                break;
+            case self::INPUT_POST:
+                $source = $_POST;
+                break;
+            case self::INPUT_REQUEST:
+                $source = $_REQUEST;
+                break;
+            case self::INPUT_SERVER:
+                $source = $_SERVER;
+                break;
+            case self::INPUT_LITERAL:
+                return $name;
+            default:
+                throw new \Exception('Invalid input source');
+        }
 
-	private function getInput($name) {
-		switch ($this->inputSource) {
-			case self::INPUT_GET: $source = $_GET; break;
-			case self::INPUT_POST: $source = $_POST; break;
-			case self::INPUT_REQUEST: $source = $_REQUEST; break;
-			case self::INPUT_SERVER: $source = $_SERVER; break;
-			case self::INPUT_LITERAL:
-				return $name;
-			default:
-				throw new \Exception('Invalid input source');
-		}
+        if (isset($source[$name])) {
+            return $source[$name];
+        } else {
+            return $this->variableHunt($source, $name);
+        }
+    }
 
-		if (isset($source[$name])) {
-			return $source[$name];
-		} else {
-			return $this->variableHunt($source, $name);
-		}
-	}
+    private function variableHunt(array $source, $name)
+    {
+        foreach ($source as $key => $value) {
+            if (strstr($key, $name) !== false) {
+                return $source[$key];
+            }
+        }
 
-	private function variableHunt(array $source, $name) {
-		foreach ($source as $key => $value) {
-			if (strstr($key, $name) !== FALSE) {
-				return $source[$key];
-			}	
-		}
+        if ($this->filterAllowUndefined) {
+            return false;
+        } else {
+            throw new \Exception('Input variable not found: ' . $name);
+        }
+    }
 
-		if ($this->filterAllowUndefined) {
-			return false;
-		} else {
-			throw new \Exception('Input variable not found: ' . $name);
-		}
-	}
+    public function filterId()
+    {
+        return $this->filterUint('id');
+    }
 
-	public function filterId() {
-		return $this->filterUint('id');
-	}
+    public function filterUint($name, $min = 0, $max = PHP_INT_MAX)
+    {
+        $min = max($min, 0); // rectify sint
 
-	public function filterUint($name, $min = 0, $max = PHP_INT_MAX) {
-		$min = max($min, 0); // rectify sint
+        return $this->filterInt($name, $min, $max);
+    }
 
-		return $this->filterInt($name, $min, $max);
-	}
+    public function filterInt($name, $min = null, $max = PHP_INT_MAX)
+    {
+        if ($min == null) {
+            $min = -PHP_INT_MAX;
+        }
 
-	public function filterInt($name, $min = null, $max = PHP_INT_MAX) {
-		if ($min == null) {
-			$min = -PHP_INT_MAX;
-		}
+        $value = intval($this->getInput($name));
 
-		$value = intval($this->getInput($name));
+        if ($value < $min) {
+            $this->triggerFailFilter('The integer variable '  . $name . ' is below the minimum legal value of ' . $min);
+        } elseif ($value > $max) {
+            $this->triggerFailFilter('The integer variable '  . $name . ' is above the maximum legal value of ' . $max);
+        }
 
-		if ($value < $min) {
-			$this->triggerFailFilter('The integer variable '  . $name . ' is below the minimum legal value of ' . $min);
-		} else if ($value > $max) {
-			$this->triggerFailFilter('The integer variable '  . $name . ' is above the maximum legal value of ' . $max);
-		}
+        return $value;
+    }
 
-		return $value;
-	}
+    public function filterSint($name, $min = PHP_INT_MIN, $max = PHP_INT_MAX)
+    {
+        return $this->filterInt($name, $min, $max);
+    }
 
-	public function filterSint($name, $min = PHP_INT_MIN, $max = PHP_INT_MAX) {
-		return $this->filterInt($name, $min, $max);
-	}
+    public function filterIdentifier($name)
+    {
+        $c = $this->getInput($name);
+        $c = (string) $c;
 
-	public function filterIdentifier($name) {
-		$c = $this->getInput($name);
-		$c = (string) $c;
+        if (preg_match('#^\w[\w\d]+$#', $c) === 0) {
+            $this->triggerFailFilter('Content is not an identifier: ' . $name);
+        }
 
-		if (preg_match('#^\w[\w\d]+$#', $c) === 0) {
-			$this->triggerFailFilter('Content is not an identifier: ' . $name);
-		}
+        return $c;
+    }
 
-		return $c;
-	}
+    public function filterAlphanumeric($name)
+    {
+        $c = $this->getInput($name);
+        $c = (string) $c;
 
-	public function filterAlphanumeric($name) {
-		$c = $this->getInput($name);
-		$c = (string) $c;
+        if (preg_match('#^[\w\d ]+$#i', $c) === 0) {
+            $this->triggerFailFilter('Content is not alphanumeric: ' . $c);
+        }
 
-		if (preg_match('#^[\w\d ]+$#i', $c) === 0) {
-			$this->triggerFailFilter('Content is not alphanumeric: ' . $c);
-		}
+        return $c;
+    }
 
-		return $c; 
-	}
+    public function filterNumeric($content)
+    {
+        if (!is_numeric($content)) {
+            $this->triggerFailFilter('Content is not numeric');
+        }
 
-	public function filterNumeric($content) {
-		if (!is_numeric($content)) {
-			$this->triggerFailFilter('Content is not numeric');	
-		}
+        return $content;
+    }
 
-		return $content;
-	}
+    public function filterString($name)
+    {
+        return (string) $this->getInput($name);
+    }
 
-	public function filterString($name) {
-		return (string) $this->getInput($name);
-	}
+    public function filterFilepath()
+    {
+    }
 
-	public function filterFilepath() {
+    public function escapeStringForClean($content)
+    {
+        if (is_string($content)) {
+            $content = stripslashes($content);
+        }
 
-	}
+        return $content;
+    }
 
-	public function escapeStringForClean($content) {
-		if (is_string($content)) {
-			$content = stripslashes($content);
-		}
+    public function escapeStringForDatabase($content)
+    {
+        return $this->escapeStringForClean($content);
+    }
 
-		return $content;
-	}
+    public function escapeStringForHtml($content)
+    {
+        $content = strip_tags($content);
+        $content = htmlentities($content);
 
-	public function escapeStringForDatabase($content) {
-		return $this->escapeStringForClean($content);
-	}
+        return $content;
+    }
 
-	public function escapeStringForHtml($content) {
-		$content = strip_tags($content);
-		$content = htmlentities($content);
-
-		return $content;
-	}
-
-	public function escapeStringForConsole($content) {
-		return $content;
-	}
+    public function escapeStringForConsole($content)
+    {
+        return $content;
+    }
 
 
-	public function formatStringForDatabase($content) {
-		return $this->escapeStringForDatabase($content);
-	}
+    public function formatStringForDatabase($content)
+    {
+        return $this->escapeStringForDatabase($content);
+    }
 
-	public function formatStringForHtml($content) {
-		return $this->escapeStringForHtml($content);
-	}
+    public function formatStringForHtml($content)
+    {
+        return $this->escapeStringForHtml($content);
+    }
 
-	public function formatString($content, $destination = 3) {
-		if ($destination & self::FORMAT_FOR_DB) {
-			$content = $this->formatStringForDatabase($content);
-		}
+    public function formatString($content, $destination = 3)
+    {
+        if ($destination & self::FORMAT_FOR_DB) {
+            $content = $this->formatStringForDatabase($content);
+        }
 
-		if ($destination & self::FORMAT_FOR_HTML) {
-			$content = $this->formatStringForHtml($content);
-		}
+        if ($destination & self::FORMAT_FOR_HTML) {
+            $content = $this->formatStringForHtml($content);
+        }
 
-		return $content;
-	}
+        return $content;
+    }
 
-	public function formatNumericAsHex($num) {
-		return dechex($num);
-	}
+    public function formatNumericAsHex($num)
+    {
+        return dechex($num);
+    }
 
-	public function formatBool($content) {
-		if ($content) {
-			return true;
-		} else {
-			return false;
-		}
-	}
+    public function formatBool($content)
+    {
+        if ($content) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-	public function filterEnum($name, $accepted, $default = null) {
-		$value = $this->filterString($name);
+    public function filterEnum($name, $accepted, $default = null)
+    {
+        $value = $this->filterString($name);
 
-		if (in_array($value, $accepted)) {
-			return $value;
-		} else {
-			return $default;
-		}
-	}
+        if (in_array($value, $accepted)) {
+            return $value;
+        } else {
+            return $default;
+        }
+    }
 }
-
-?>

@@ -1,14 +1,14 @@
 <?php
 
 require_once 'common.php';
-require_once 'libAllure/Sanitizer.php';
 
 use \libAllure\Sanitizer;
+use \PHPUnit\Framework\TestCase;
 
-class SanitizerTest extends PHPUnit_Framework_TestCase {
+class SanitizerTest extends TestCase {
 	private $sanitizer;
 
-	public function __construct() {
+	protected function setUp(): void {
 		$this->sanitizer = Sanitizer::getInstance();
 	}
 

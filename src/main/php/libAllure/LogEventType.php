@@ -1,4 +1,5 @@
 <?php
+
 /*******************************************************************************
 
   This program is free software; you can redistribute it and/or modify
@@ -19,16 +20,13 @@
 
 namespace libAllure;
 
-if (defined(__FILE__)) { return; } else { define(__FILE__, true); }
-
-abstract class LogEventType {
-	const TESTING = 1000;
-	const USER_LOGIN = 1001;
-	const USER_LOGOUT = 1002;
-	CONST USER_REGISTER = 1003;
-	const LOGIN_FAILURE = 1060;
-	const LOGIN_FAILURE_USERNAME = 1061;
-	const LOGIN_FAILURE_PASSWORD = 1062;
+abstract class LogEventType
+{
+    public const TESTING = 1000;
+    public const USER_LOGIN = 1001;
+    public const USER_LOGOUT = 1002;
+    public const USER_REGISTER = 1003;
+    public const LOGIN_FAILURE = 1060;
+    public const LOGIN_FAILURE_USERNAME = 1061;
+    public const LOGIN_FAILURE_PASSWORD = 1062;
 }
-
-?>

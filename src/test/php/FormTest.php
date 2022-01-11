@@ -10,6 +10,7 @@ use \libAllure\ElementSelect;
 use \libAllure\ElementInput;
 use \libAllure\ElementHtml;
 use \libAllure\ElementInputRegex;
+use \PHPUnit\Framework\TestCase;
 
 class EmptyForm extends \libAllure\Form {
 	public function __construct($name) {
@@ -17,7 +18,7 @@ class EmptyForm extends \libAllure\Form {
 	}
 }
 
-class FormTest extends PHPUnit_Framework_TestCase {
+class FormTest extends TestCase {
 	public function testAddingElements() {
 		$el = new ElementInput('title', 'description');
 
@@ -61,6 +62,8 @@ class FormTest extends PHPUnit_Framework_TestCase {
 
 	public function testElementHtml() {
 		$el = new ElementHtml('test', null, 'foo');
+
+		$this->assertEquals('test', $el->getName());
 	}
 
 	public function testFormTitle() {

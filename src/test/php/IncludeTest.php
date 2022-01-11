@@ -5,8 +5,9 @@ require_once 'common.php';
 require_once 'libAllure/IncludePath.php';
 
 use \libAllure\IncludePath;
+use \PHPUnit\Framework\TestCase;
 
-class IncludePathTest extends PHPUnit_Framework_TestCase {
+class IncludePathTest extends TestCase {
 	public function testAdd() {
 		$this->assertFalse(stripos(get_include_path(), 'foo'));
 

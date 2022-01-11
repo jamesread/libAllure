@@ -1,54 +1,65 @@
 <?php
 
-require_once 'lightopenid/openid.php';
+namespace libAllure;
 
-use \libAllure\AuthBackend;
+use libAllure\AuthBackend;
 
-class AuthBackendOpenId extends AuthBackend {
-	private $consumerKey;
-	private $consumerSecret;
+class AuthBackendOpenId extends AuthBackend
+{
+    private $consumerKey;
+    private $consumerSecret;
 
-	public function __construct($domain) {
-		if ($domain[strlen($domain) - 1] != '/') {
-			throw new \Exception('Domain must end with a /');
-		}
+    public function __construct($domain)
+    {
+        require_once 'lightopenid/openid.php';
 
-		$this->openid = new LightOpenId($domain);
-		$this->openid->realm = $domain;
-		$this->openid->required = array(
-			'contact/email'
-		);
-	}
+        if ($domain[strlen($domain) - 1] != '/') {
+            throw new \Exception('Domain must end with a /');
+        }
 
-	public function checkCredentials($username, $password) {
-	}
+        $this->openid = new LightOpenId($domain);
+        $this->openid->realm = $domain;
+        $this->openid->required = array(
+            'contact/email'
+        );
+    }
 
-	public function getUserAttributes($username = null) {
-		return $this->openid->getAttributes();
-	}
+    public function checkCredentials($username, $password)
+    {
+    }
 
-	public function getEmail() {
-		$attrs = $this->getUserAttributes();
+    public function getUserAttributes($username = null)
+    {
+        return $this->openid->getAttributes();
+    }
 
-		return $attrs['contact/email'];
-	}
+    public function getEmail()
+    {
+        $attrs = $this->getUserAttributes();
 
-	public function getOpenId() {
-		return $this->openid;
-	}
+        return $attrs['contact/email'];
+    }
 
-	public function login($provider) {
-		switch ($provider) {
-			case 'google': $this->openid->identity = 'https://www.google.com/accounts/o8/id'; break;
-			default: throw new Exception('Unknown provider');
-		}
+    public function getOpenId()
+    {
+        return $this->openid;
+    }
 
-		header('Location:' . $this->openid->authUrl());
-	}
+    public function login($provider)
+    {
+        switch ($provider) {
+            case 'google':
+                $this->openid->identity = 'https://www.google.com/accounts/o8/id';
+                break;
+            default:
+                throw new Exception('Unknown provider');
+        }
 
-	public function getMode() {
-		return $this->openid->mode;
-	}
+        header('Location:' . $this->openid->authUrl());
+    }
+
+    public function getMode()
+    {
+        return $this->openid->mode;
+    }
 }
-
-?>

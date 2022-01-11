@@ -4,8 +4,9 @@ require_once 'common.php';
 require_once 'libAllure/Inflector.php';
 
 use \libAllure\Inflector;
+use \PHPUnit\Framework\TestCase;
 
-class InflectorTest extends PHPUnit_Framework_TestCase {
+class InflectorTest extends TestCase {
 	public function testSingulars() {
 		$this->assertEquals('muppet', Inflector::singular('muppets'));
 		$this->assertEquals('cake', Inflector::singular('cakes'));

@@ -1,4 +1,5 @@
 <?php
+
 /*******************************************************************************
 
   This program is free software; you can redistribute it and/or modify
@@ -19,52 +20,53 @@
 
 namespace libAllure;
 
-if (defined(__FILE__)) { return; } else { define(__FILE__, true); }
+class Database extends \PDO
+{
+    private const FM_ORDER = \PDO::FETCH_NUM;
+    private const FM_ASSOC = \PDO::FETCH_ASSOC;
+    private const FM_OBJECT = \PDO::FETCH_OBJ;
 
-class Database extends \PDO {
-	const FM_ORDER = \PDO::FETCH_NUM;
-	const FM_ASSOC = \PDO::FETCH_ASSOC;
-	const FM_OBJECT = \PDO::FETCH_OBJ;
+    private const DB_MYSQL_ERR_CONSTRAINT = 23000;
 
-	const DB_MYSQL_ERR_CONSTRAINT = 23000;
+    public $queryCount = 0;
 
-	public $queryCount = 0;
+    /**
+    @throws PDOException if it cannot connect
+    */
+    public function __construct($dsn, $username, $password)
+    {
+        parent::__construct($dsn, $username, $password, array(\PDO::ATTR_PERSISTENT => false));
 
-	/**
-	@throws PDOException if it cannot connect
-	*/
-	public function __construct($dsn, $username, $password) {
-		parent::__construct($dsn, $username, $password, array(\PDO::ATTR_PERSISTENT => false));
+        $this->setAttribute(\PDO::ATTR_STATEMENT_CLASS, array('\libAllure\DatabaseStatement', array($this)));
+        $this->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        $this->setAttribute(\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+        //$this->setAttribute(PDO::MYSQL_ATTR_DIRECT_QUERY, true);
+    }
 
-		$this->setAttribute(\PDO::ATTR_STATEMENT_CLASS, array('\libAllure\DatabaseStatement', array($this)));
-		$this->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-		$this->setAttribute(\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
-		//$this->setAttribute(PDO::MYSQL_ATTR_DIRECT_QUERY, true);
-	}
+    public function prepareSelectById($table, $id)
+    {
+        $args = func_get_args();
+        $table = array_shift($args);
+        $id = intval(array_shift($args));
 
-	public function prepareSelectById($table, $id) {
-		$args = func_get_args();
-		$table = array_shift($args);
-		$id = intval(array_shift($args));
+        $fields = implode(array_merge(array('id'), $args), ', ');
+        $sql = "SELECT {$fields} FROM {$table} WHERE id = :id";
+        $stmt = $this->prepare($sql);
+        $stmt->bindValue(':id', $id);
 
-		$fields = implode(array_merge(array('id'), $args), ', ');
-		$sql = "SELECT {$fields} FROM {$table} WHERE id = :id";
-		$stmt = $this->prepare($sql);
-		$stmt->bindValue(':id', $id);
-		
-		return $stmt;
-	}
+        return $stmt;
+    }
 
-	public function fetchById($table, $id) {
-		$stmt = call_user_func_array(array($this, 'prepareSelectById'), func_get_args());
-		$stmt->execute();
+    public function fetchById($table, $id)
+    {
+        $stmt = call_user_func_array(array($this, 'prepareSelectById'), func_get_args());
+        $stmt->execute();
 
-		return $stmt->fetchRowNotNull();
-	}
+        return $stmt->fetchRowNotNull();
+    }
 
-	public function escape($s) {
-		return $s;
-	}
+    public function escape($s)
+    {
+        return $s;
+    }
 }
-
-?>

@@ -1,4 +1,5 @@
 <?php
+
 /*******************************************************************************
 
   This program is free software; you can redistribute it and/or modify
@@ -19,101 +20,104 @@
 
 namespace libAllure;
 
-if (defined(__FILE__)) { return; } else { define(__FILE__, true); }
+use libAllure\Database;
 
-require_once 'libAllure/AuthBackend.php';
-require_once 'libAllure/Database.php';
+class AuthBackendDatabase extends \libAllure\AuthBackend
+{
+    // sha1 as default isn't the most secure, but it's a good trade off of security vs speed.
+    private $hashAlgo = 'sha1';
+    private $database;
+    private $prefixSalt = null;
+    private $suffixSalt = null;
 
-class AuthBackendDatabase extends \libAllure\AuthBackend {
-	// sha1 as default isn't the most secure, but it's a good trade off of security vs speed.
-	private $hashAlgo = 'sha1'; 
-	private $database;
-	private $prefixSalt = null;
-	private $suffixSalt = null;
+    public function __construct(Database $databaseInstance = null)
+    {
+        if ($databaseInstance == null) {
+            $this->database = DatabaseFactory::getInstance();
+        } else {
+            $this->database = $databaseInstance;
+        }
 
-	public function __construct(Database $databaseInstance = null) {
-		if ($databaseInstance == null) {
-			$this->database = DatabaseFactory::getInstance();
-		} else {
-			$this->database = $databaseInstance; 
-		}
+        if (!($this->database instanceof Database)) {
+            throw new Exception('No valid database found in AuthBackendDatabase - neither passed to constructor or registered in DatabaseFactory.');
+        }
+    }
 
-		if (!($this->database instanceof Database)) {
-			throw new Exception('No valid database found in AuthBackendDatabase - neither passed to constructor or registered in DatabaseFactory.');
-		}
-	}	
+    public function checkCredentials($username, $password)
+    {
+        $sql = 'SELECT u.username, u.password FROM users u WHERE u.username = :username LIMIT 1';
+        $stmt = $this->database->prepare($sql);
+        $stmt->bindValue(':username', $username);
+        $stmt->execute();
 
-	public function checkCredentials($username, $password) {
-		$sql = 'SELECT u.username, u.password FROM users u WHERE u.username = :username LIMIT 1';
-		$stmt = $this->database->prepare($sql);
-		$stmt->bindValue(':username', $username);
-		$stmt->execute();
+        if ($stmt->numRows() == 0) {
+            throw new \libAllure\exceptions\UserNotFoundException();
+        } else {
+            $result = $stmt->fetchRow();
 
-		if ($stmt->numRows() == 0) {
-			throw new UserNotFoundException();
-		} else	{
-			$result = $stmt->fetchRow();
+            if ($this->hashPassword($password) !== $result['password']) {
+                throw new \libAllure\exceptions\IncorrectPasswordException();
+            } else {
+                return true;
+            }
+        }
+    }
 
-			if ($this->hashPassword($password) !== $result['password']) {
-				throw new IncorrectPasswordException();
-			} else {
-				return true;
-			}
-		}
-	}
+    public function setHashAlgo($hashAlgo)
+    {
+        $this->hashAlgo = $hashAlgo;
+    }
 
-	public function setHashAlgo($hashAlgo) {
-		$this->hashAlgo = $hashAlgo;
-	}
+    public function setSalt($prefixSalt = null, $suffixSalt = null)
+    {
+        $this->prefixSalt = $prefixSalt;
+        $this->suffixSalt = $suffixSalt;
+    }
 
-	public function setSalt($prefixSalt = null, $suffixSalt = null) {
-		$this->prefixSalt = $prefixSalt;
-		$this->suffixSalt = $suffixSalt;
-	}
+    public function hashPassword($password)
+    {
+        $password = $this->prefixSalt . $password . $this->suffixSalt;
 
-	public function hashPassword($password) {
-		$password = $this->prefixSalt . $password . $this->suffixSalt;
+        return hash($this->hashAlgo, $password);
+    }
 
-		return hash($this->hashAlgo, $password);
-	}
+    public function getUserAttributes($identifier, $uniqueField = 'username')
+    {
+        $sql = 'SELECT * FROM `users` WHERE `' . $uniqueField . '` = :identifier LIMIT 1';
+        $stmt = $this->database->prepare($sql);
+        $stmt->bindValue(':identifier', $identifier);
+        $stmt->execute();
 
-	public function getUserAttributes($identifier, $uniqueField = 'username') {
-		$sql = 'SELECT * FROM `users` WHERE `' . $uniqueField . '` = :identifier LIMIT 1';
-		$stmt = $this->database->prepare($sql);
-		$stmt->bindValue(':identifier', $identifier);
-		$stmt->execute();
+        if ($stmt->numRows() == 0) {
+            throw new \libAllure\exceptions\UserNotFoundException('Could not getData for user, because local user record was not found in the DB. ');
+        }
 
-		if ($stmt->numRows() == 0) {
-			throw new UserNotFoundException('Could not getData for user, because local user record was not found in the DB. ');
+        $attributes = $stmt->fetchRow(Database::FM_ASSOC);
 
-		}
+        return $attributes;
+    }
 
-		$attributes = $stmt->fetchRow(Database::FM_ASSOC);
+    public function setUserAttribute($username, $field, $value)
+    {
+        $sql = 'UPDATE `users` SET `' . DatabaseFactory::getInstance()->escape($field) . '` = :value WHERE `username` = :username LIMIT 1';
+        $stmt = $this->database->prepare($sql);
+        $stmt->bindValue(':value', $value);
+        $stmt->bindValue(':username', $username);
+        $stmt->execute();
+    }
 
-		return $attributes;
-	}
+    public function createTables()
+    {
+        $sql = array();
+        $sql[] = 'CREATE TABLE IF NOT EXISTS users (id int not null primary key auto_increment, username varchar(32), password varchar(64), `group` int, lastLogin datetime)';
+        $sql[] = 'CREATE TABLE IF NOT EXISTS groups (id int not null primary key auto_increment, title varchar(32))';
+        $sql[] = 'CREATE TABLE IF NOT EXISTS group_memberships (id int not null primary key auto_increment, `group` int, user int)';
+        $sql[] = 'CREATE TABLE IF NOT EXISTS permissions (id int not null primary key auto_increment, `key` varchar(32), description longtext)';
+        $sql[] = 'CREATE TABLE IF NOT EXISTS privileges_g (permission int, `group` int)';
+        $sql[] = 'CREATE TABLE IF NOT EXISTS privileges_u (permission int, `user` int)';
 
-	public function setUserAttribute($username, $field, $value) {
-		$sql = 'UPDATE `users` SET `' . DatabaseFactory::getInstance()->escape($field) . '` = :value WHERE `username` = :username LIMIT 1';
-		$stmt = $this->database->prepare($sql);
-		$stmt->bindValue(':value', $value);
-		$stmt->bindValue(':username', $username);
-		$stmt->execute();
-	}
-
-	public function createTables() {
-		$sql = array();
-		$sql[] = 'CREATE TABLE IF NOT EXISTS users (id int not null primary key auto_increment, username varchar(32), password varchar(64), `group` int, lastLogin datetime)';
-		$sql[] = 'CREATE TABLE IF NOT EXISTS groups (id int not null primary key auto_increment, title varchar(32))';
-		$sql[] = 'CREATE TABLE IF NOT EXISTS group_memberships (id int not null primary key auto_increment, `group` int, user int)';
-		$sql[] = 'CREATE TABLE IF NOT EXISTS permissions (id int not null primary key auto_increment, `key` varchar(32), description longtext)';
-		$sql[] = 'CREATE TABLE IF NOT EXISTS privileges_g (permission int, `group` int)';
-		$sql[] = 'CREATE TABLE IF NOT EXISTS privileges_u (permission int, `user` int)';
-
-		foreach($sql as $sqlQuery) {
-			$this->database->query($sqlQuery);
-		}
-	}
+        foreach ($sql as $sqlQuery) {
+            $this->database->query($sqlQuery);
+        }
+    }
 }
-
-?>

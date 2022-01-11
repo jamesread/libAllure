@@ -1,4 +1,5 @@
 <?php
+
 /*******************************************************************************
 
   This program is free software; you can redistribute it and/or modify
@@ -19,50 +20,52 @@
 
 namespace libAllure;
 
-if (defined(__FILE__)) { return; } else { define(__FILE__, true); }
+class DatabaseStatement extends \PdoStatement
+{
+    public $dbh;
+    private $numRows = null;
 
-class DatabaseStatement extends \PdoStatement {
-	public $dbh;
-	private $numRows = null;
+    protected function __construct($dbh)
+    {
+        $this->dbh = $dbh;
+        $this->dbh->queryCount++;
+        $this->setFetchMode(Database::FM_ASSOC);
+    }
 
-	protected function __construct($dbh) {
-		$this->dbh = $dbh;
-		$this->dbh->queryCount++;
-		$this->setFetchMode(Database::FM_ASSOC);
-	}
+    public function fetchRow($fm = Database::FM_ASSOC)
+    {
+        return $this->fetch($fm);
+    }
 
-	public function fetchRow($fm = Database::FM_ASSOC) {
-		return $this->fetch($fm);
-	}
+    public function fetchRowNotNull($fm = Database::FM_ASSOC)
+    {
+        $result = $this->fetchRow();
 
-	public function fetchRowNotNull($fm = Database::FM_ASSOC) {
-		$result = $this->fetchRow();
+        if (empty($result)) {
+            throw new \Exception('Row not found. Used query: ' . $this->queryString);
+        } else {
+            return $result;
+        }
+    }
 
-		if (empty($result)) {
-			throw new \Exception('Row not found. Used query: ' . $this->queryString);
-		} else {
-			return $result;
-		}
-	}
+    public function numRows()
+    {
+        if ($this->numRows == null) {
+            $sql = 'SELECT found_rows()';
+            $result = $this->dbh->query($sql);
+            $row = $result->fetchRow();
+            $row = current($row);
 
-	public function numRows() {
-		if ($this->numRows == null) {
-			$sql = 'SELECT found_rows()';
-			$result = $this->dbh->query($sql);
-			$row = $result->fetchRow();
-			$row = current($row);
+            $this->numRows = $row;
+        }
 
-			$this->numRows = $row;
-		}
+        return $this->numRows;
+    }
 
-		return $this->numRows;
-	}
+    public function execute($inputParams = null)
+    {
+        parent::execute($inputParams);
 
-	public function execute($inputParams = null) {
-		parent::execute($inputParams);
-
-		return $this;
-	}
+        return $this;
+    }
 }
-
-?>

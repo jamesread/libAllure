@@ -2,74 +2,81 @@
 
 // These shortcuts just save some typing for default configurations.
 
-function san() {
-	require_once 'libAllure/Sanitizer.php';
+function san()
+{
+    require_once 'libAllure/Sanitizer.php';
 
-	global $san;
+    global $san;
 
-	if (!isset($san)) {
-		$san = new libAllure\Sanitizer;
-	}
+    if (!isset($san)) {
+        $san = new libAllure\Sanitizer();
+    }
 
-	return $san;
+    return $san;
 }
 
-function db() {
-	require_once 'libAllure/Database.php';
+function db()
+{
+    require_once 'libAllure/Database.php';
 
-	global $db;
+    global $db;
 
-	if (!isset($db)) {
-		$db = new libAllure\Database;
-	}
+    if (!isset($db)) {
+        $db = new libAllure\Database();
+    }
 
-	return $db;
+    return $db;
 }
 
-function stmt($sql) {
-	return db()->prepare($sql);
+function stmt($sql)
+{
+    return db()->prepare($sql);
 }
 
-function tpl($name) {
-	require_once 'libAllure/Template.php';
-	return new libAllure\Template($name);
+function tpl($name)
+{
+    require_once 'libAllure/Template.php';
+    return new libAllure\Template($name);
 }
 
-function errorHandler() {
-	require_once 'libAllure/ErrorHandler.php';
-	return new libAllure\ErrorHandler();
+function errorHandler()
+{
+    require_once 'libAllure/ErrorHandler.php';
+    return new libAllure\ErrorHandler();
 }
 
-function filterStrings() {
-	require_once 'libAllure/Sanitizer.php';
+function filterStrings()
+{
+    require_once 'libAllure/Sanitizer.php';
 
-	$ret = array();
-	$san = \libAllure\Sanitizer::getInstance();
-	$san->filterAllowUndefined = false;
+    $ret = array();
+    $san = \libAllure\Sanitizer::getInstance();
+    $san->filterAllowUndefined = false;
 
-	foreach (func_get_args() as $argname) {
-		$ret[$argname] = $san->filterString($argname);
-	}
+    foreach (func_get_args() as $argname) {
+        $ret[$argname] = $san->filterString($argname);
+    }
 
-	return $ret;
+    return $ret;
 }
 
-function filterUints() {
-	require_once 'libAllure/Sanitizer.php';
+function filterUints()
+{
+    require_once 'libAllure/Sanitizer.php';
 
-	$ret = array();
-	$san = \libAllure\Sanitizer::getInstance();
-	$san->filterAllowUndefined = false;
+    $ret = array();
+    $san = \libAllure\Sanitizer::getInstance();
+    $san->filterAllowUndefined = false;
 
-	foreach (func_get_args() as $argname) {
-		$ret[$argname] = $san->filterUint($argname);
-	}
+    foreach (func_get_args() as $argname) {
+        $ret[$argname] = $san->filterUint($argname);
+    }
 
-	return $ret;
+    return $ret;
 }
 
-function vde() {
-	var_dump(func_get_args()); exit;
+function vde()
+{
+    var_dump(func_get_args());
+    exit;
 }
-
-?>

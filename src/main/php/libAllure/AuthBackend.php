@@ -1,4 +1,5 @@
 <?php
+
 /*******************************************************************************
 
   This program is free software; you can redistribute it and/or modify
@@ -19,55 +20,60 @@
 
 namespace libAllure;
 
-if (defined(__FILE__)) { return; } else { define(__FILE__, true); }
+abstract class AuthBackend
+{
+    private static $registry;
 
-abstract class AuthBackend {
-	private static $registry;
+    abstract public function checkCredentials($username, $password);
 
-	public abstract function checkCredentials($username, $password);
+    public function getUserAttributes($username)
+    {
+        if (get_class($this) != '\libAllure\AuthBackendDatabase') {
+            $db = new AuthBackendDatabase();
+            return $db->getUserAttributes($username);
+        }
+    }
 
-	public function getUserAttributes($username) {
-		if (get_class($this) != '\libAllure\AuthBackendDatabase') {
-			$db = new AuthBackendDatabase();
-			return $db->getUserAttributes($username);
-		}
-	}
+    public static function getInstance()
+    {
+        return self::getBackend();
+    }
 
-	public static function getInstance() {
-		return self::getBackend();
-	}
+    final public function register($identifier = 'default')
+    {
+        self::$registry[$identifier] = $this;
+    }
 
-	public final function register($identifier = 'default') {
-		self::$registry[$identifier] = $this;
-	}
+    public static function getBackend($identifier = 'default')
+    {
+        if (!isset(self::$registry[$identifier])) {
+            throw new \Exception('An AuthBackend instance with identifier ' . $identifier . ' has not been registered via AuthBackend::setBackend($instance).');
+        }
 
-	public static function getBackend($identifier = 'default') {
-		if (!isset(self::$registry[$identifier])) {
-			throw new \Exception('An AuthBackend instance with identifier ' . $identifier . ' has not been registered via AuthBackend::setBackend($instance).');
-		}
+        if (!self::$registry[$identifier] instanceof AuthBackend) {
+            throw new \Exception('Failed to get auth backend, it is not a valid instance of AuthBackend.');
+        }
 
-		if (!self::$registry[$identifier] instanceof AuthBackend) {
-			throw new \Exception('Failed to get auth backend, it is not a valid instance of AuthBackend.');
-		}
+        return self::$registry[$identifier];
+    }
 
-		return self::$registry[$identifier];
-	}
+    public static function setBackend(AuthBackend $backend)
+    {
+        self::$registry['default'] = $backend;
+    }
 
-	public static function setBackend(AuthBackend $backend) {
-		self::$registry['default'] = $backend;
-	}
+    public function registerAsDefault()
+    {
+        self::register();
+    }
 
-	public function registerAsDefault() {
-		self::register();
-	}
+    public static function getAllBackendIdentifiers()
+    {
+        return array_keys(self::$registry);
+    }
 
-	public static function getAllBackendIdentifiers() {
-		return array_keys(self::$registry);
-	}
-
-	public static function getAllBackends() {
-		return self::$registry;
-	}
+    public static function getAllBackends()
+    {
+        return self::$registry;
+    }
 }
-
-?>

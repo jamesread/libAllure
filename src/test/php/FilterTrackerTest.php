@@ -5,8 +5,9 @@ require_once 'common.php';
 require_once 'libAllure/FilterTracker.php';
 
 use \libAllure\FilterTracker;
+use \PHPUnit\Framework\TestCase;
 
-class FilterTrackerTest extends PHPUnit_Framework_TestCase {
+class FilterTrackerTest extends TestCase {
 	public function testConstruct() {
 		$tracker = new FilterTracker();
 

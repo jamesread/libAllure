@@ -3,10 +3,10 @@ default: tests lint
 test: tests
 
 tests:
-	phpunit 
+	phpunit --coverage-html coverage --whitelist src/main/php/libAllure/
 	
 lint:
-	phpcs --standard=PSR2 src/main/php/
+	phpcs 
 
 
 .PHONY: test tests default lint

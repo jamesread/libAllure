@@ -1,4 +1,5 @@
 <?php
+
 /*******************************************************************************
 
   This program is free software; you can redistribute it and/or modify
@@ -19,142 +20,159 @@
 
 namespace libAllure;
 
-if (defined(__FILE__)) { return; } else { define(__FILE__, true); }
+class HtmlLinksCollection implements \Iterator, \Countable
+{
+    private $title;
+    private $collection = array();
+    private $iteratorPosition = 0; // Dont use the collection pointer
+    private $defaultIcon;
 
-class HtmlLinksCollection implements \Iterator, \Countable {
-	private $title;
-	private $collection = array();
-	private $iteratorPosition = 0; // Dont use the collection pointer
-	private $defaultIcon;
+    public function __construct($title = null)
+    {
+        $this->title = $title;
+    }
 
-	public function __construct($title = null) {
-		$this->title = $title;
-	}
+    public function setDefaultIcon($icon)
+    {
+        $this->defaultIcon = $icon;
+    }
 
-	public function setDefaultIcon($icon) {
-		$this->defaultIcon = $icon;
-	}
+    public function current()
+    {
+        return $this->collection[$this->iteratorPosition];
+    }
 
-	public function current() {
-		return $this->collection[$this->iteratorPosition];
-	}
+    public function next()
+    {
+        $this->iteratorPosition++;
+    }
 
-	public function next() {
-		$this->iteratorPosition++;
-	}
+    public function prev()
+    {
+        $this->iteratorPosition--;
+    }
 
-	public function prev() {
-		$this->iteratorPosition--;
-	}
+    public function key()
+    {
+        return $this->iteratorPosition;
+    }
 
-	public function key() {
-		return $this->iteratorPosition;
-	}
+    public function rewind()
+    {
+        $this->iteratorPosition = 0;
+    }
 
-	public function rewind() {
-		$this->iteratorPosition = 0;
-	}
+    public function getChildCollection($linkTitle = null)
+    {
+        if (empty($title)) {
+            $title = $this->collection[$this->iteratorPosition]['title'];
+        }
 
-	public function getChildCollection($linkTitle = null) {
-		if (empty($title)) {
-			$title = $this->collection[$this->iteratorPosition]['title'];
-		}
+        if (isset($this->childCollection[$title])) {
+            return $this->childCollection[$title]->getAll();
+        } else {
+            return false;
+        }
+    }
 
-		if (isset($this->childCollection[$title])) {
-			return $this->childCollection[$title]->getAll();
-		} else {
-			return false;
-		}
-	}
+    public function valid()
+    {
+        if (count($this->collection) == 0) {
+            return false;
+        } elseif ($this->iteratorPosition >= count($this->collection)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 
-	public function valid() {
-		if (count($this->collection) == 0) {
-			return false;
-		} else if ($this->iteratorPosition >= count($this->collection)) {
-			return false;
-		} else {
-			return true;
-		}
-	}
+    public function hasLinks()
+    {
+        return $this->getCount() > 0;
+    }
 
-	public function hasLinks() {
-		return $this->getCount() > 0;
-	}
+    public function getCount()
+    {
+        return count($this->collection);
+    }
 
-	public function getCount() {
-		return count($this->collection);
-	}
+    public function count()
+    {
+        return $this->getCount();
+    }
 
-	public function count() {
-		return $this->getCount();
-	}
+    public function addIfPriv($priv, $url, $title, $iconUrl = null, $containerClass = null)
+    {
+        $this->addIf(Session::hasPriv($priv), $url, $title, $iconUrl, $containerClass);
+    }
 
-	public function addIfPriv($priv, $url, $title, $iconUrl = null, $containerClass = null) {
-		$this->addIf(Session::hasPriv($priv), $url, $title, $iconUrl, $containerClass);
-	}
+    public function addIf($test, $url, $title, $iconUrl = null, $containerClass = null)
+    {
+        if ($test) {
+            $this->add($url, $title, $iconUrl, $containerClass);
+        }
+    }
 
-	public function addIf($test, $url, $title, $iconUrl = null, $containerClass = null) {
-		if ($test) {
-			$this->add($url, $title, $iconUrl, $containerClass);
-		}
-	}
+    public function add($url, $title, $iconUrl = null, $containerClass = null)
+    {
+        if (empty($iconUrl) && !empty($this->defaultIcon)) {
+            $iconUrl = $this->defaultIcon;
+        }
 
-	public function add($url, $title, $iconUrl = null, $containerClass = null) {
-		if (empty($iconUrl) && !empty($this->defaultIcon)) {
-			$iconUrl = $this->defaultIcon;
-		}
+        $this->collection[] = array(
+            'url' => $url,
+            'title' => $title,
+            'iconUrl' => $iconUrl,
+            'enabled' => true,
+            'containerClass' => $containerClass,
+            'children' => array(),
+            'separator' => false,
+        );
 
-		$this->collection[] = array(
-			'url' => $url,
-			'title' => $title,
-			'iconUrl' => $iconUrl,
-			'enabled' => true,
-			'containerClass'=> $containerClass,
-			'children' => array(),
-			'separator' => false,
-		);
-
-		return key($this->collection);
-	}
+        return key($this->collection);
+    }
 
 
-	public function addSeparator() {
-		$this->collection[] = array(
-			'url' => null,
-			'title' => uniqid(),
-			'iconUrl' => null,
-			'enabled' => true,
-			'containerClass'=> null,
-			'children' => array(),
-			'separator' => true,
-		);
-	}
+    public function addSeparator()
+    {
+        $this->collection[] = array(
+            'url' => null,
+            'title' => uniqid(),
+            'iconUrl' => null,
+            'enabled' => true,
+            'containerClass' => null,
+            'children' => array(),
+            'separator' => true,
+        );
+    }
 
-	public function addChildCollection($title, HtmlLinksCollection $childCollection = null) {
-		if ($childCollection == null) {
-			$childCollection = new HtmlLinksCollection();
-			$childCollection->defaultIcon = $this->defaultIcon;
-		}
+    public function addChildCollection($title, HtmlLinksCollection $childCollection = null)
+    {
+        if ($childCollection == null) {
+            $childCollection = new HtmlLinksCollection();
+            $childCollection->defaultIcon = $this->defaultIcon;
+        }
 
-		foreach ($this->collection as &$link) {
-			if ($link['title'] == $title) {
-				$link['children'] = $childCollection;
-				return $childCollection;
-			}
-		}
-	}
+        foreach ($this->collection as &$link) {
+            if ($link['title'] == $title) {
+                $link['children'] = $childCollection;
+                return $childCollection;
+            }
+        }
+    }
 
-	public function getAll() {
-		return $this->collection;
-	}
+    public function getAll()
+    {
+        return $this->collection;
+    }
 
-	public function setEnabled($linkIndex, $toEnabledState) {
-		$this->collection[$linkIndex]['enabled'] = $toEnabledState;
-	}
+    public function setEnabled($linkIndex, $toEnabledState)
+    {
+        $this->collection[$linkIndex]['enabled'] = $toEnabledState;
+    }
 
-	public function getTitle() {
-		return $this->title;
-	}
+    public function getTitle()
+    {
+        return $this->title;
+    }
 }
-
-?>
