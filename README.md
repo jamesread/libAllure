@@ -5,6 +5,12 @@ A set of utilities, helpers and shims. It aims to be pretty modular and lightwei
 
 [![Travis build Status](https://travis-ci.org/jamesread/libAllure.png?branch=master)](https://travis-ci.org/jamesread/libAllure)
 
+## Compatibility
+
+* libAllure 2.x - PHP 7.3+ and PHP 8.
+    * PSR12 and PSR2 compliant.
+* libAllure 1.x - Up to ~ PHP 5.5.x
+
 ## Adding with `composer`
 
 You can add libAllure to your project quickly, if you're using composer.

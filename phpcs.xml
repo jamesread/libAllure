@@ -6,6 +6,6 @@
 		<exclude-pattern>src/main/php</exclude-pattern>
 	</rule>
 
-	<rule ref="PSR2" />
+	<rule ref="PSR12" />
 </ruleset>
 
