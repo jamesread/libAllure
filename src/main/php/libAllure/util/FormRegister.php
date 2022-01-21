@@ -5,6 +5,7 @@ namespace libAllure\util;
 use libAllure\Form;
 use libAllure\ElementInput;
 use libAllure\ElementPassword;
+use libAllure\Logger;
 
 class FormRegister extends \libAllure\Form
 {
@@ -77,7 +78,6 @@ class FormRegister extends \libAllure\Form
         $stmt->execute();
 
         Logger::messageNormal('New user registration: ' . $this->getElementValue('username'), LocalEventType::CREATE_USER);
-        sendEmailToAdmins('Username: ' . $this->getElementValue('username'), 'New user registration: ' . $this->getElementValue('username'));
 
         redirect('loginregister.php?formLogin-username=' . $this->getElementValue('username'), 'Registeration complete!');
     }
