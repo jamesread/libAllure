@@ -1,6 +1,6 @@
 <?php
 
-namespace libAllure;
+namespace libAllure\util;
 
 use libAllure\Form;
 use libAllure\ElementInput;

@@ -35,9 +35,9 @@ class FormLogin extends \libAllure\Form
             if (!$res) {
                 $this->getElement('username')->setValidationError('Non true return code from backend::checkCredentials().');
             }
-        } catch (\libAllure\UserNotFoundException $e) {
+        } catch (\libAllure\exceptions\UserNotFoundException $e) {
             $this->getElement('username')->setValidationError('Username not found.');
-        } catch (\libAllure\IncorrectPasswordException $e) {
+        } catch (\libAllure\exceptions\IncorrectPasswordException $e) {
             $this->getElement('password')->setValidationError('Incorrect password.');
         }
     }
