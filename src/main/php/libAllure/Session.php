@@ -102,10 +102,10 @@ class Session
         if ($credCheck) {
             self::performLogin($username);
 
-            Logger::messageDebug('Sucessful login for: ' . $username, LogEventType::USER_LOGIN);
+            Logger::messageDebug('Sucessful login for: ' . $username, 'USER_LOGIN');
             return true;
         } else {
-            Logger::messageDebug('Login failed for: ' . $username, LogEventType::LOGIN_FAILURE);
+            Logger::messageDebug('Login failed for: ' . $username, 'USER_LOGIN_FAILURE');
             return false;
         }
     }
@@ -149,7 +149,7 @@ class Session
 
     public static function logout()
     {
-        Logger::messageNormal('Logout: ' . self::getUser()->getUsername(), LogEventType::USER_LOGOUT);
+        Logger::messageNormal('Logout: ' . self::getUser()->getUsername(), 'USER_LOGOUT');
 
         session_unset();
         session_destroy();
