@@ -22,11 +22,11 @@ namespace libAllure;
 
 class Database extends \PDO
 {
-    private const FM_ORDER = \PDO::FETCH_NUM;
-    private const FM_ASSOC = \PDO::FETCH_ASSOC;
-    private const FM_OBJECT = \PDO::FETCH_OBJ;
+    public const FM_ORDER = \PDO::FETCH_NUM;
+    public const FM_ASSOC = \PDO::FETCH_ASSOC;
+    public const FM_OBJECT = \PDO::FETCH_OBJ;
 
-    private const DB_MYSQL_ERR_CONSTRAINT = 23000;
+    public const DB_MYSQL_ERR_CONSTRAINT = 23000;
 
     public $queryCount = 0;
 
