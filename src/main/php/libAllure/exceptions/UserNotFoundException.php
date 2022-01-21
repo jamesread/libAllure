@@ -2,6 +2,6 @@
 
 namespace libAllure\exceptions;
 
-class UseNotFoundException extends \Exception
+class UserNotFoundException extends \Exception
 {
 }
