@@ -37,27 +37,27 @@ class HtmlLinksCollection implements \Iterator, \Countable
         $this->defaultIcon = $icon;
     }
 
-    public function current()
+    public function current() : mixed
     {
         return $this->collection[$this->iteratorPosition];
     }
 
-    public function next()
+    public function next() : void
     {
         $this->iteratorPosition++;
     }
 
-    public function prev()
+    public function prev() : void
     {
         $this->iteratorPosition--;
     }
 
-    public function key()
+    public function key() : mixed
     {
         return $this->iteratorPosition;
     }
 
-    public function rewind()
+    public function rewind() : void
     {
         $this->iteratorPosition = 0;
     }
@@ -75,7 +75,7 @@ class HtmlLinksCollection implements \Iterator, \Countable
         }
     }
 
-    public function valid()
+    public function valid() : bool
     {
         if (count($this->collection) == 0) {
             return false;
@@ -96,7 +96,7 @@ class HtmlLinksCollection implements \Iterator, \Countable
         return count($this->collection);
     }
 
-    public function count()
+    public function count() : int
     {
         return $this->getCount();
     }

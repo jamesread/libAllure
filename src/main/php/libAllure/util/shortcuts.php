@@ -28,7 +28,18 @@ function db()
 
 function stmt($sql)
 {
-    return db()->prepare($sql);
+    $stmt = db()->prepare($sql);
+
+    return $stmt;
+}
+
+function stmtPrepExec($sql) 
+{
+    $stmt = stmt($sql);
+    $stmt->prepare();
+    $stmt->execute();
+
+    return $stmt;
 }
 
 function tpl($name)

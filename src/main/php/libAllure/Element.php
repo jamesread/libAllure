@@ -133,7 +133,7 @@ abstract class Element implements \JsonSerializable
         return $this->value;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize() : mixed
     {
         return array(
             'name' => $this->name,
