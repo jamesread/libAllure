@@ -3,6 +3,8 @@ libAllure
 
 A set of utilities, helpers and shims. It aims to be pretty modular and lightweight.
 
+This library is published by packagist.org for easy use with composer; https://packagist.org/packages/jwread/lib-allure 
+
 [![Travis build Status](https://travis-ci.org/jamesread/libAllure.png?branch=master)](https://travis-ci.org/jamesread/libAllure)
 
 ## Compatibility
