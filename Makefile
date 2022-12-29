@@ -3,7 +3,7 @@ default: tests lint
 test: tests
 
 tests:
-	phpunit --coverage-html coverage --whitelist src/main/php/libAllure/
+	composer run-script test
 	
 lint:
 	phpcs 

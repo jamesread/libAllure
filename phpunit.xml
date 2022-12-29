@@ -4,4 +4,9 @@
 			<directory>src/test/php/</directory>
 		</testsuite>
 	</testsuites>
+	<groups>
+		<exclude>
+			<group>database</group>
+		</exclude>
+	</groups>
 </phpunit>
