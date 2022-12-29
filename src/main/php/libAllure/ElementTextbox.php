@@ -6,6 +6,9 @@ class ElementTextbox extends Element
 {
     public function render()
     {
+        if ($this->value == null) {
+            $this->value = '';
+        }
 
         $value = htmlentities($this->value, ENT_QUOTES);
         $value = stripslashes($value);

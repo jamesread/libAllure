@@ -12,6 +12,11 @@ class ElementInput extends Element
     {
         $onChange = (empty($this->onChange)) ? null : 'onkeyup = "' . $this->onChange . '()"';
 
+        if ($this->value == null) 
+        {
+            $this->value = '';
+        }
+
         $value = htmlentities($this->value, ENT_QUOTES);
         $value = stripslashes($value);
         $value = strip_tags($value);
