@@ -270,7 +270,7 @@ class ErrorHandler
                 return 'PHP Recoverable Error';
             case E_DEPRECATED:
                 return 'PHP Deprecated';
-            case E_USER_DEPRCATED:
+            case E_USER_DEPRECATED:
                 return 'PHP User Deprecated';
             default:
                 return 'Unknown (' . $code . ')';
