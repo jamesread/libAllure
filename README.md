@@ -9,8 +9,8 @@ This library is published by packagist.org for easy use with composer; https://p
 
 ## Compatibility
 
-* libAllure 2.x - PHP 7.3+ and PHP 8.
-    * PSR12 and PSR2 compliant.
+* libAllure 8.x - PHP 8.x
+* libAllure 2.x - PHP 7.3+ (PSR12 and PSR2 compliant - easy composer compatibility)
 * libAllure 1.x - Up to ~ PHP 5.5.x
 
 ## Adding with `composer`
