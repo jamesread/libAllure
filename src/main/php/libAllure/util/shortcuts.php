@@ -9,7 +9,7 @@ function san()
     global $san;
 
     if (!isset($san)) {
-        $san = new libAllure\Sanitizer();
+        $san = new \libAllure\Sanitizer();
     }
 
     return $san;
@@ -20,7 +20,7 @@ function db()
     global $db;
 
     if (!isset($db)) {
-        $db = new libAllure\Database();
+        $db = new \libAllure\Database();
     }
 
     return $db;
@@ -33,7 +33,7 @@ function stmt($sql)
     return $stmt;
 }
 
-function stmtPrepExec($sql) 
+function stmtPrepExec($sql)
 {
     $stmt = stmt($sql);
     $stmt->prepare();
@@ -44,12 +44,12 @@ function stmtPrepExec($sql)
 
 function tpl($name)
 {
-    return new libAllure\Template($name);
+    return new \libAllure\Template($name);
 }
 
 function errorHandler()
 {
-    return new libAllure\ErrorHandler();
+    return new \libAllure\ErrorHandler();
 }
 
 function filterStrings()

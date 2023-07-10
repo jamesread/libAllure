@@ -7,11 +7,13 @@ This library is published by packagist.org for easy use with composer; https://p
 
 [![Travis build Status](https://travis-ci.org/jamesread/libAllure.png?branch=master)](https://travis-ci.org/jamesread/libAllure)
 
-## Compatibility
+## Compatibiility
 
-* libAllure 2.x - PHP 7.3+ and PHP 8.
-    * PSR12 and PSR2 compliant.
-* libAllure 1.x - Up to ~ PHP 5.5.x
+|               | Up to PHP 5.5.x | Up tp PHP 7.3 | PHP 8         |
+| ------------- | --------------- | ------------- | ------------- |
+| libAllure 1.x | supported       | not supported | not supported |
+| libAllure 2.x | not supported   | supported     | not supported |
+| libAllure 8.x | not supported   | not supported | supported     |
 
 ## Adding with `composer`
 
