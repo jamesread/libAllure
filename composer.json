@@ -1,6 +1,7 @@
 {
     "name": "jwread/lib-allure",
-    "description": "A set of utilities, helpers and shims. It aims to be pretty modular and lightweight.",
+	"homepage": "https://github.com/jamesread/libAllure",
+    "description": "A set of utilities, helpers and shims. It aims to be pretty modular and lightweight. API Docs are here; http://jamesread.github.io/libAllure/",
     "suggest": {
         "smarty/smarty": "^3.1"
     },
