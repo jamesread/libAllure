@@ -7,6 +7,8 @@ This library is published by packagist.org for easy use with composer; https://p
 
 [![PHP Composer](https://github.com/jamesread/libAllure/actions/workflows/php.yml/badge.svg)](https://github.com/jamesread/libAllure/actions/workflows/php.yml)
 
+**API Documentation**: http://jamesread.github.io/libAllure/
+
 ## Compatibiility
 
 |               | Up to PHP 5.5.x | Up tp PHP 7.3 | PHP 8         |
