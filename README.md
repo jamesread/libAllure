@@ -23,16 +23,19 @@ You can add libAllure to your project quickly, if you're using composer.
 
 Then to use it, like in test.php;
 
-	<?php
+```php
+<?php
 
-	require_once 'vendor/autoload.php';
+require_once 'vendor/autoload.php';
 
-	use \libAllure\Database;
-	use \libAllure\ErrorHandler
-	use \libAllure\Form
-	// ...
+use \libAllure\Database;
+use \libAllure\ErrorHandler;
+use \libAllure\Form;
 
-	?>
+// etc
+
+?>
+```
 
 ## Adding with a standard PHP include
 
@@ -44,65 +47,71 @@ Copy the contents of `/src/main/php/` to somewhere on your include path, like
 ### Database
 Wrapper around **PDO**.
 
-	require_once 'libAllure/Database.php';
+```php
+require_once 'libAllure/Database.php';
 
-	use \libAllure\Database;
+use \libAllure\Database;
 
-	$database = new Database('mysql:dbname=testdb;host=127.0.0.1', 'username', 'password');
+$database = new Database('mysql:dbname=testdb;host=127.0.0.1', 'username', 'password');
 
-	$sql = 'SELECT p.id, p.title FROM products p';
-	$results = $database->prepare($sql)->execute();
+$sql = 'SELECT p.id, p.title FROM products p';
+$results = $database->prepare($sql)->execute();
 
-	var_dump($results->fetchAll());
+var_dump($results->fetchAll());
+```
 
 ### ErrorHandler
 Custom error handler that complains at the slightest thing, makes debugging nice and easy.
 
-	require_once 'libAllure/ErrorHandler.php';
+```php
+require_once 'libAllure/ErrorHandler.php';
 
-	use \libAllure\ErrorHandler;
+use \libAllure\ErrorHandler;
 
-	$handler = new ErrorHandler();
-	$handler->beGreedy();
+$handler = new ErrorHandler();
+$handler->beGreedy();
 
-	throw new Exception('This is a test');
+throw new Exception('This is a test');
+```
 
 ### Form
 Custom form handling code. 
 
-	require_once 'libAllure/Form.php';
-	require_once 'libAllure/Template.php';
+```php
+require_once 'libAllure/Form.php';
+require_once 'libAllure/Template.php';
 
-	use \libAllure\ElementInput;
-	use \libAllure\Template;
+use \libAllure\ElementInput;
+use \libAllure\Template;
 
-	$tpl = new Template('myTemplates'); // requires form.tpl and formElements.tpl in your templates folder
+$tpl = new Template('myTemplates'); // requires form.tpl and formElements.tpl in your templates folder
 
-	class MyForm extends \libAllure\Form {
-		public function __construct() {
-			$this->addElement(new ElementInput('forename', 'Forename', 'My Default Name');
-			$this->addDefaultButtons():
-		}
-
-		public function process() {
-			// do something
-		}
+class MyForm extends \libAllure\Form {
+	public function __construct() {
+		$this->addElement(new ElementInput('forename', 'Forename', 'My Default Name');
+		$this->addDefaultButtons():
 	}
 
-	$f = new MyForm();
-
-	if ($f->validate()) {
-		$f->process();
+	public function process() {
+		// do something
 	}
+}
 
-	$tpl->displayForm($f);
+$f = new MyForm();
+
+if ($f->validate()) {
+	$f->process();
+}
+
+$tpl->displayForm($f);
+```
 
 ### Template
 Just a nice wrapper around Smarty2/3, that adds in a few compatibility functions to easily switch between the versions.
 
-	require_once 'libAllure/Template.php';
+```php
+use \libAllure\Template;
 
-	use \libAllure\Template;
-
-	$tpl = new Template('myTemplates');
-	$tpl->display('myTemplate.tpl');
+$tpl = new Template('myTemplates');
+$tpl->display('myTemplate.tpl');
+```
