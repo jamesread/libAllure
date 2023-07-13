@@ -91,6 +91,11 @@ abstract class Element implements \JsonSerializable
         $this->required = ($v === true);
     }
 
+    final public function isRequired()
+    {
+        return $this->required;
+    }
+
     final public function setCaption($c)
     {
         $this->caption = $c;
