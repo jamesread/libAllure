@@ -5,6 +5,7 @@ namespace libAllure;
 class ElementDate extends Element
 {
     protected $allowEmpty = true;
+    protected string $format = 'Y-m-d H:i';
 
     protected function validateInternals()
     {
@@ -36,19 +37,8 @@ class ElementDate extends Element
     public function render()
     {
         $today = new \DateTime();
-        $today = $today->format('Y-m-d');
+        $today = $today->format($this->format);
 
-        $buf = null;
-        $buf .= sprintf('<div class = "labelHolder"><label for = "%s">%s</label></div><div class = "elementHolder"><input id = "%s" name = "%s" value = "%s" /><span class = "dummyLink" onclick = "javascript:document.getElementById(\'%s\').value=\'%s\'">Today</span></div>', $this->name, $this->caption, $this->name, $this->name, $this->value, $this->name, $today);
-        $buf .= <<<JS
-<script type = "text/javascript">
-	$("#{$this->name}").datepicker({
-		dateFormat: "yy-mm-dd", firstDay: 1
-	});
-
-</script>
-JS;
-
-        return $buf;
+        return sprintf('<div class = "labelHolder"><label for = "%s">%s</label></div><div class = "elementHolder"><input id = "%s" name = "%s" value = "%s" /><span class = "dummyLink" onclick = "javascript:document.getElementById(\'%s\').value=\'%s\'">Today</span></div>', $this->name, $this->caption, $this->name, $this->name, $this->value, $this->name, $today);
     }
 }

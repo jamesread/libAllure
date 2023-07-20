@@ -80,6 +80,15 @@ function filterUints()
 
 function vde()
 {
-    var_dump(func_get_args());
+    if (!headers_sent()) {
+        header('Content-Type: text/plain');
+    }
+
+    foreach (func_get_args() as $i => $arg) {
+        echo "Arg " . $i . ":\n";
+        var_dump($arg);
+        echo "\n\n";
+    }
+
     exit;
 }

@@ -8,13 +8,13 @@ use \libAllure\HtmlLinksCollection;
 use \PHPUnit\Framework\TestCase;
 
 class HtmlLinksCollectionTest extends TestCase {
-	public function testCount() {
-		$links = new HtmlLinksCollection();
+    public function testCount() {
+        $links = new HtmlLinksCollection();
 
-		$this->assertEquals(count($links), 0);
+        $this->assertEquals(count($links), 0);
 
-		$links->add('foo', 'bar');
+        $links->add('foo', 'bar');
 
-		$this->assertEquals(count($links), 1);
-	}
+        $this->assertEquals(count($links), 1);
+    }
 }

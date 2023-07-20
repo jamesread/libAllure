@@ -62,12 +62,13 @@ class DatabaseStatement extends \PdoStatement
         return $this->numRows;
     }
 
-    public function execute(?array $inputParams = null) : bool
+    public function execute(?array $inputParams = null): bool
     {
         return parent::execute($inputParams);
     }
 
-    public function executeRet(?array $inputParams = null) : \PdoStatement {
+    public function executeRet(?array $inputParams = null): \PdoStatement
+    {
         $this->execute($inputParams);
 
         return $this;

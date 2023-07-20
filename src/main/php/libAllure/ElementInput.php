@@ -12,8 +12,7 @@ class ElementInput extends Element
     {
         $onChange = (empty($this->onChange)) ? null : 'onkeyup = "' . $this->onChange . '()"';
 
-        if ($this->value == null) 
-        {
+        if ($this->value == null) {
             $this->value = '';
         }
 
