@@ -13,7 +13,7 @@ class QueryBuilder
     private $joins = array();
     private $joinConditions = array();
 
-    private $lastPrefix = null;
+    private $lastAliasUsed = null;
     private $lastJoinedTabke = null;
 
     public function __construct($verb = 'SELECT')
@@ -23,9 +23,9 @@ class QueryBuilder
         $this->verb = $verb;
     }
 
-    public function orderBy()
+    public function orderBy(string ...$fields)
     {
-        foreach (func_get_args() as $arg) {
+        foreach ($fields as $arg) {
             $arg = $this->addFieldPrefix($arg);
 
             array_push($this->orderBy, $arg);
@@ -34,25 +34,26 @@ class QueryBuilder
         return $this;
     }
 
-    public function from($from, $prefix = null)
+    public function from(string $tableName, string $alias = null, string $database = null)
     {
-        if ($prefix == null) {
-            $prefix = substr($from, 0, 1);
+        if ($alias == null) {
+            $alias = substr($tableName, 0, 1);
         }
 
         $this->from = array(
-            "prefix" => $prefix,
-            "table" => $from
+            'alias' => $alias,
+            'table' => $tableName,
+            'database' => $database
         );
 
-        $this->lastPrefix = $prefix;
+        $this->lastAliasUsed = $alias;
 
         return $this;
     }
 
-    public function fields()
+    public function fields(string|array ...$fields)
     {
-        foreach (func_get_args() as $arg) {
+        foreach ($fields as $arg) {
             if (is_array($arg)) {
                 $field = array(
                     'field' => $arg[0],
@@ -80,12 +81,12 @@ class QueryBuilder
         }
 
         if (strpos($field, '.') === false) {
-            $prefix = $this->lastPrefix . '.';
+            $alias = $this->lastAliasUsed . '.';
         } else {
-            $prefix = '';
+            $alias = '';
         }
 
-        return $prefix . $field;
+        return $alias . $field;
     }
 
     public function where($field, $operator, $value)
@@ -196,17 +197,17 @@ class QueryBuilder
         return $this;
     }
 
-    public function on($field, $value)
+    public function onEq($field, $value)
     {
-        return $this->onImpl($field, '=', $value);
+        return $this->on($field, '=', $value);
     }
 
     public function onGt($field, $value)
     {
-        return $this->onImpl($field, '>', $value);
+        return $this->on($field, '>', $value);
     }
 
-    public function onImpl($field, $operator, $value)
+    public function on(string $field, string $operator, string $value)
     {
         $this->joinConditions[$this->lastJoinedTable][] = array(
             'field' => $field,
@@ -301,7 +302,11 @@ class QueryBuilder
         }
     }
 
-    public function build()
+    /**
+     * Builds the actual SQL.
+     * @return Cake asdf
+     */
+    public function build(): string
     {
         if (!is_array($this->from)) {
             throw new \Exception("From table not specified");
@@ -312,8 +317,11 @@ class QueryBuilder
         }
 
         $ret = $this->verb . ' ';
-        $ret .= $this->buildFields() . ' FROM ' . $this->from['table'] . ' ';
-        $ret .= $this->from['prefix'] . $this->buildJoins();
+
+        $from = $this->from['database'] != null ? $this->from['database'] . '.' . $this->from['table'] : $this->from['table'];
+
+        $ret .= $this->buildFields() . ' FROM ' . $from . ' ';
+        $ret .= $this->from['alias'] . $this->buildJoins();
         $ret .= $this->buildWhere();
         $ret .= $this->buildGroup();
         $ret .= ' ORDER BY ' . $this->buildOrderBy();

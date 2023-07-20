@@ -41,7 +41,7 @@ class ErrorHandler
 
     /**
      * @returns ErrorHandler
-     * @deprecated
+     * @deprecated This class is no longer a singleton, just create a new instance using new `ErrorHandler();`.
      */
     public static function getInstance()
     {
