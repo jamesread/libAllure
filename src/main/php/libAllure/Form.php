@@ -348,16 +348,6 @@ abstract class Form
         }
     }
 
-    public function getDisplay()
-    {
-        ob_start();
-        $this->display();
-        $contents = ob_get_contents();
-        ob_end_clean();
-
-        return $contents;
-    }
-
     final public function validate()
     {
         if (!$this->isSubmitted()) {
@@ -367,7 +357,7 @@ abstract class Form
         foreach (array_flatten($this->elements) as $e) {
             $name =  $e->getName();
 
-            if ($e instanceof ElementCheckBox && !isset($_POST[$name])) {
+            if ($e instanceof ElementCheckbox && !isset($_POST[$name])) {
                 // If checkboxes are not checked browsers do not include them in
                 // $_POST, but we have them in our form, so set to 0.
                 $e->setValue(0);

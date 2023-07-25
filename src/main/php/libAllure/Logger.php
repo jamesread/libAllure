@@ -60,11 +60,10 @@ abstract class Logger
 
     public static function messageException($e, $comment = null)
     {
-        if (!$e instanceof Exception) {
+        if (!$e instanceof \Exception) {
             self::message('EXPT', 'Logging a weird exception: ' . print_r($e, true));
 
             return;
-            exit;
         }
 
         $eventType = null;
@@ -80,7 +79,7 @@ abstract class Logger
         self::message('DEBG', $message, $eventType, $metadata);
     }
 
-    private static function message($priority, $messageActual, $eventType, array $metadata = null)
+    private static function message($priority, $messageActual, $eventType = null, array $metadata = null)
     {
         if (self::$fileLoggingEnabled) {
             self::logToFile($priority, $messageActual, $eventType);
@@ -89,13 +88,13 @@ abstract class Logger
         self::logToListeners($priority, $messageActual, $eventType, $metadata);
     }
 
-    private static function logToFile($priority, $message)
+    private static function logToFile($priority, $message, $eventType)
     {
         if (self::$handle == null) {
             self::$handle = fopen(self::$filepath, 'a');
         }
 
-        $message = ' [' . $priority . '] ' . $message;
+        $message = ' [' . $priority . '] ' . $eventType . ': ' . $message;
         $message = date('c') . $message;
 
         fputs(self::$handle, $message . "\n");

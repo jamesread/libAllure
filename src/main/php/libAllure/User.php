@@ -40,7 +40,7 @@ class User
     public function requirePriv($priv)
     {
         if (!$this->hasPriv($priv)) {
-            throw new Exception($priv);
+            throw new \Exception($priv);
         }
     }
 
@@ -67,7 +67,7 @@ class User
         if (isset($this->data['manager'])) {
             return $this->data['manager'];
         } else {
-            throw new Exception('Manager not set.');
+            throw new \Exception('Manager not set.');
         }
     }
 
@@ -178,7 +178,7 @@ SQL;
     public function hasPriv($ident)
     {
         if (!is_string($ident)) {
-            throw new Exception('Priv ident must be a string, passed to User::hasPriv');
+            throw new \Exception('Priv ident must be a string, passed to User::hasPriv');
         }
 
         return (array_key_exists($ident, $this->privs) || array_key_exists('SUPERUSER', $this->privs)) !== false;
@@ -189,7 +189,7 @@ SQL;
         if ($this->hasPriv($ident)) {
             return $ident;
         } else {
-            throw new Exception('Trying to get a priv that the user does not have (' . $ident . ')');
+            throw new \Exception('Trying to get a priv that the user does not have (' . $ident . ')');
         }
     }
 

@@ -6,8 +6,7 @@ use libAllure\AuthBackend;
 
 class AuthBackendOpenId extends AuthBackend
 {
-    private $consumerKey;
-    private $consumerSecret;
+    private ?\LightOpenID $openid;
 
     public function __construct($domain)
     {
@@ -17,11 +16,10 @@ class AuthBackendOpenId extends AuthBackend
             throw new \Exception('Domain must end with a /');
         }
 
-        $this->openid = new LightOpenId($domain);
-        $this->openid->realm = $domain;
-        $this->openid->required = array(
+        $this->openid = new \LightOpenID($domain);
+        $this->openid->required = [
             'contact/email'
-        );
+        ];
     }
 
     public function checkCredentials($username, $password)
@@ -49,10 +47,10 @@ class AuthBackendOpenId extends AuthBackend
     {
         switch ($provider) {
             case 'google':
-                $this->openid->identity = 'https://www.google.com/accounts/o8/id';
+                $this->openid->__set('identity', 'https://www.google.com/accounts/o8/id');
                 break;
             default:
-                throw new Exception('Unknown provider');
+                throw new \Exception('Unknown provider');
         }
 
         header('Location:' . $this->openid->authUrl());
@@ -60,6 +58,6 @@ class AuthBackendOpenId extends AuthBackend
 
     public function getMode()
     {
-        return $this->openid->mode;
+        return $this->openid->__get('mode');
     }
 }

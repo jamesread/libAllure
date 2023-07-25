@@ -4,6 +4,8 @@ namespace libAllure;
 
 class ElementFile extends Element
 {
+    private $imageResource = null;
+
     public $isImage = true;
     public $destinationDir = '/tmp/';
     public $destinationFilename = 'unnamed';

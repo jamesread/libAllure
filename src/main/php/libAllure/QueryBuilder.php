@@ -14,7 +14,7 @@ class QueryBuilder
     private $joinConditions = array();
 
     private $lastAliasUsed = null;
-    private $lastJoinedTabke = null;
+    private $lastJoinedTable = null;
 
     public function __construct($verb = 'SELECT')
     {

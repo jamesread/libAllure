@@ -72,9 +72,11 @@ class FormHandler
         if ($this->form->validate()) {
             $this->form->process();
 
+            /*
             if (!empty($_SESSION['formRedirectUrl'])) {
                 redirect($_SESSION['formRedirectUrl'], $_SESSION['formRedirectReason']);
             }
+            */
         } else {
             $this->handleRenderForm($this->form);
         }
@@ -99,7 +101,7 @@ class FormHandler
     public function setConstructorArgument($id, $value)
     {
         if ($id > 5) {
-            throw new Exception('Max of 5 arguments supported.');
+            throw new \Exception('Max of 5 arguments supported.');
         }
 
         $this->constructorArguments[$id] = $value;

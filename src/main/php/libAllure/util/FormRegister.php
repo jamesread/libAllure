@@ -78,7 +78,5 @@ class FormRegister extends \libAllure\Form
         $stmt->execute();
 
         Logger::messageNormal('New user registration: ' . $this->getElementValue('username'), 'USER_REGISTRATION');
-
-        redirect('loginregister.php?formLogin-username=' . $this->getElementValue('username'), 'Registeration complete!');
     }
 }

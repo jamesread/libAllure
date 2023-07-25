@@ -52,7 +52,7 @@ class Session
     public static function requirePriv($ident)
     {
         if (!self::hasPriv($ident)) {
-            throw new Exception();
+            throw new \Exception();
         }
     }
 

@@ -22,10 +22,10 @@ namespace libAllure;
 
 class FilterTracker
 {
-    private $filters = array();
-    private $vars = array();
-    private $options = array();
-    private $hiddenVales = array();
+    private array $vars = [];
+    private array $options = [];
+    private array $labels = [];
+    private array $types = [];
 
     private function add($name, $type, $label = null, $requestVar = null)
     {
@@ -46,7 +46,6 @@ class FilterTracker
     public function setHiddenValue($name, $value, $requestVar = null)
     {
         $this->add($name, 'hidden', $name, $requestVar);
-        $this->hiddenValues[$name] = $value;
     }
 
     public function addInt($name, $label = null, $requestVar = null)

@@ -17,13 +17,7 @@ function san()
 
 function db()
 {
-    global $db;
-
-    if (!isset($db)) {
-        $db = new \libAllure\Database();
-    }
-
-    return $db;
+    return \libAllure\DatabaseFactory::getInstance();
 }
 
 function stmt($sql)

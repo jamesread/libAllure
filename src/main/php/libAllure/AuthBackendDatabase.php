@@ -39,7 +39,7 @@ class AuthBackendDatabase extends \libAllure\AuthBackend
         }
 
         if (!($this->database instanceof Database)) {
-            throw new Exception('No valid database found in AuthBackendDatabase - neither passed to constructor or registered in DatabaseFactory.');
+            throw new \Exception('No valid database found in AuthBackendDatabase - neither passed to constructor or registered in DatabaseFactory.');
         }
     }
 
