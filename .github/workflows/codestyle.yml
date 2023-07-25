@@ -37,4 +37,4 @@ jobs:
           echo "$GITHUB_WORKSPACE/vendnor/bin/" >> $GITHUB_PATH
 
       - name: Run phpcs
-        run: phpcs
+        run: make lint

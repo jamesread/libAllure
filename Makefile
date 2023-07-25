@@ -6,7 +6,7 @@ tests:
 	composer run-script test
 	
 lint:
-	phpcs 
+	./vendor/bin/phpcs
 
 phpstan:
 	./vendor/bin/phpstan analyse src/main/php/libAllure/
