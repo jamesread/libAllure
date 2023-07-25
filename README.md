@@ -9,6 +9,10 @@ This library is published by packagist.org for easy use with composer; https://p
 
 **API Documentation**: http://jamesread.github.io/libAllure/
 
+[![Unit Tests](https://github.com/jamesread/libAllure/actions/workflows/unittests.yml/badge.svg)](https://github.com/jamesread/libAllure/actions/workflows/unittests.yml)
+[![Stan](https://github.com/jamesread/libAllure/actions/workflows/phpstan.yml/badge.svg)](https://github.com/jamesread/libAllure/actions/workflows/phpstan.yml)
+[![CodeStyle](https://github.com/jamesread/libAllure/actions/workflows/codestyle.yml/badge.svg)](https://github.com/jamesread/libAllure/actions/workflows/codestyle.yml)
+
 ## Compatibiility
 
 |               | Up to PHP 5.5.x | Up tp PHP 7.3 | PHP 8         |
