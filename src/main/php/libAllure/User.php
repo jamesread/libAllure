@@ -76,17 +76,10 @@ class User
         return new User($username);
     }
 
-    public function updatePrivileges()
+    private function getPrivilegesFromSupplimentaryGroups(): array
     {
-        $this->privs = array();
+        $ret = [];
 
-        $uPrivs = array();
-        $gPrivs = array();
-
-        //
-        // Group privs
-        //
-        $username = $this->getUsername();
         $sql = <<<SQL
 SELECT
    u.id,
@@ -108,12 +101,15 @@ WHERE
    gm.`group` = gp.`group` AND
    gp.`group` = g.id AND
    gp.permission = p.id AND
-   u.id = "$username"
+   u.id = :uid
 SQL;
 
-        $result = DatabaseFactory::getInstance()->query($sql);
+        $stmt = DatabaseFactory::getInstance()->prepare($sql);
+        $stmt->execute([
+            'uid' => $this->getId(),
+        ]);
 
-        foreach ($result->fetchAll() as $priv) {
+        foreach ($stmt->fetchAll() as $priv) {
             if ($priv['description'] == '') {
                 $priv['description'] = '???';
             }
@@ -122,52 +118,69 @@ SQL;
             $priv['sourceTitle'] = $priv['groupTitle'];
             $priv['sourceId'] = $priv['groupId'];
 
-            $gPrivs[$priv['key']] = $priv;
+            $ret[$priv['key']] = $priv;
         }
 
-        //
-        // Principle group privs
-        //
-        $sql = 'SELECT distinct p.key, p.description, u.username as userUsername, u.id as userId, g.id groupId, g.title groupTitle FROM permissions p, users u, groups g, privileges_g gp WHERE u.group = g.id AND gp.`group` = g.id AND gp.permission = p.id AND u.id = "' . $this->getId() .  '" ';
-        $result = DatabaseFactory::getInstance()->query($sql);
+        return $ret;
+    }
 
-        if ($result->numRows()) {
-            foreach ($result->fetchAll() as $priv) {
-                if ($priv['description'] == '') {
-                    $priv['description'] = '???';
-                }
+    private function getPrivilegesFromPrimaryGroup(): array
+    {
+        $ret = [];
 
-                $priv['source'] = 'Group';
-                $priv['sourceTitle'] = $priv['groupTitle'];
-                $priv['sourceId'] = $priv['groupId'];
+        $sql = 'SELECT distinct p.key, p.description, u.username as userUsername, u.id as userId, g.id groupId, g.title groupTitle FROM permissions p, users u, groups g, privileges_g gp WHERE u.group = g.id AND gp.`group` = g.id AND gp.permission = p.id AND u.id = :uid ';
+        $stmt = DatabaseFactory::getInstance()->prepare($sql);
+        $stmt->execute([
+            'uid' => $this->getId(),
+        ]);
 
-                $gPrivs[$priv['key']] = $priv;
+        foreach ($stmt->fetchAll() as $priv) {
+            if ($priv['description'] == '') {
+                $priv['description'] = '???';
             }
+
+            $priv['source'] = 'Group';
+            $priv['sourceTitle'] = $priv['groupTitle'];
+            $priv['sourceId'] = $priv['groupId'];
+
+            $ret[$priv['key']] = $priv;
         }
 
-        //
-        // User privs
-        //
-        $sql = 'SELECT distinct p.key, p.description, u.username as userUsername, u.id as userId FROM permissions p, privileges_u up, users u WHERE up.user = u.id AND up.permission = p.id AND u.id = "' . $this->getId() . '" ';
-        $result = DatabaseFactory::getInstance()->query($sql);
+        return $ret;
+    }
 
-        if ($result->numRows()) {
-            foreach ($result->fetchAll() as $priv) {
-                if ($priv['description'] == '') {
-                    $priv['description'] = '???';
-                }
+    private function getPrivilegesFromUser(): array
+    {
+        $ret = [];
 
-                $priv['source'] = 'User';
-                $priv['sourceTitle'] = $priv['userUsername'];
-                $priv['sourceId'] = $priv['userId'];
+        $sql = 'SELECT distinct p.key, p.description, u.username as userUsername, u.id as userId FROM permissions p, privileges_u up, users u WHERE up.user = u.id AND up.permission = p.id AND u.id = :uid ';
+        $stmt = DatabaseFactory::getInstance()->prepare($sql);
+        $stmt->execute([
+            'uid' => $this->getId(),
+        ]);
 
-                $uPrivs[$priv['key']] = $priv;
+        foreach ($stmt->fetchAll() as $priv) {
+            if ($priv['description'] == '') {
+                $priv['description'] = '???';
             }
+
+            $priv['source'] = 'User';
+            $priv['sourceTitle'] = $priv['userUsername'];
+            $priv['sourceId'] = $priv['userId'];
+
+            $ret[$priv['key']] = $priv;
         }
 
-        $this->privs = array_merge($uPrivs, $gPrivs);
+        return $ret;
+    }
 
-        return true;
+    public function updatePrivileges()
+    {
+        $this->privs = array_merge(
+            $this->getPrivilegesFromSupplimentaryGroups(),
+            $this->getPrivilegesFromPrimaryGroup(),
+            $this->getPrivilegesFromUser(),
+        );
     }
 
     public function getPrivs()
@@ -227,9 +240,9 @@ SQL;
         return true;
     }
 
-    public function getId()
+    public function getId(): int
     {
-        return $this->getData('id');
+        return intval($this->getAttribute('id'));
     }
 
     public function getUsername()
@@ -243,7 +256,7 @@ SQL;
     }
 
     /**
-     * @Deprecated
+     * @Deprecated Use getAttribute() instead.
      */
     public function getData($field, $useCache = true)
     {
@@ -264,7 +277,9 @@ SQL;
         return AuthBackend::getBackend()->setUserAttribute($this->username, $key, $value);
     }
 
-    /** @Deprecated */
+    /**
+     * @Deprecated Use setAttribute() instead.
+     */
     public function setData($key, $value)
     {
         $this->setAttribute($key, $value);
