@@ -135,6 +135,14 @@ class HtmlLinksCollection implements \Iterator, \Countable
 
     public function addSeparator()
     {
+        if (empty($this->collection)) {
+            return;
+        }
+
+        if (current($this->collection)['separator']) {
+            return;
+        }
+
         $this->collection[] = array(
             'url' => null,
             'title' => uniqid(),
