@@ -16,14 +16,14 @@ abstract class Shortcuts
 
     public static function stmt($sql)
     {
-        $stmt = db()->prepare($sql);
+        $stmt = self::db()->prepare($sql);
 
         return $stmt;
     }
 
     public static function stmtPrepExec($sql)
     {
-        $stmt = stmt($sql);
+        $stmt = self::stmt($sql);
         $stmt->prepare();
         $stmt->execute();
 
