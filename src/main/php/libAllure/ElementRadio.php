@@ -29,6 +29,6 @@ class ElementRadio extends Element
             $strOptions .= sprintf('<li><label><input type = "radio" name = "%s" value = "%s" %s />%s</label></li>', $this->name, $key, $sel, $val);
         }
 
-        return sprintf('<div class = "labelHolder"><label>%s</label></div><div class = "elementHolder"><ul>%s</ul></div>', $this->caption, $strOptions);
+        return sprintf('<ul>%s</ul>', $strOptions);
     }
 }

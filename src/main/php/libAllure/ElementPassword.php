@@ -34,6 +34,6 @@ class ElementPassword extends Element
 
     public function render()
     {
-        return sprintf('<div class = "labelHolder"><label for = "%s">%s</label></div><div class = "elementHolder"><input %s id = "%s" name = "%s" type = "password" /></div>', $this->name, $this->caption, (($this->required == true) ? 'class = "required"' : null), $this->name, $this->name);
+        return sprintf('<input id = "%s" name = "%s" type = "password" />', $this->name, $this->name);
     }
 }

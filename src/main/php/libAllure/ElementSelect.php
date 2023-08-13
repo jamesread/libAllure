@@ -72,7 +72,7 @@ class ElementSelect extends Element
             $htmlName .= '[]';
         }
 
-        return sprintf('<div class = "labelHolder"><label>%s</label></div><div class = "elementHolder"><select id = "%s" %s %s %s name = "%s">%s</select>' . $suggestedValues . '</div>', $this->caption, $htmlName, $onChange, $size, $multiple, $htmlName, $strOptions);
+        return sprintf('<select id = "%s" %s %s %s name = "%s">%s</select>' . $suggestedValues . '', $htmlName, $onChange, $size, $multiple, $htmlName, $strOptions);
     }
 
     public function setSize($count)

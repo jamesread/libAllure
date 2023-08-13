@@ -14,6 +14,6 @@ class ElementTextbox extends Element
         $value = stripslashes($value);
         $value = strip_tags($value);
 
-        return sprintf('<div class = "labelHolder"><label for = "%s">%s</label></div><div class = "elementHolder"><textarea id = "%s" name = "%s" rows = "8" cols = "80">%s</textarea></div>', $this->name, $this->caption, $this->name, $this->name, $this->value);
+        return sprintf('<textarea id = "%s" name = "%s" rows = "8" cols = "80">%s</textarea>', $this->name, $this->name, $this->value);
     }
 }

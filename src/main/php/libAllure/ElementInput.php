@@ -30,7 +30,7 @@ class ElementInput extends Element
             }
         }
 
-        return sprintf('<div class = "labelHolder"><label ' . $classes . 'for = "%s">%s</label></div><div class = "elementHolder"><input %s id = "%s" name = "%s" value = "%s" />%s</div>', $this->name, $this->caption, $onChange, $this->name, $this->name, $value, implode(', ', $suggestedValues));
+        return sprintf('<input %s id = "%s" name = "%s" value = "%s" />%s</div>', $onChange, $this->name, $this->name, $value, implode(', ', $suggestedValues));
     }
 
     public function validateInternals()

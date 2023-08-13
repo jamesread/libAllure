@@ -170,6 +170,6 @@ class ElementFile extends Element
 
     public function render()
     {
-        return sprintf('<div class = "labelHolder"><label for = "%s">%s</label></div><div class = "elementHolder"><input name = "%s" type = "file" /></div>', $this->name, $this->caption, $this->name);
+        return sprintf('<input name = "%s" type = "file" />', $this->name);
     }
 }

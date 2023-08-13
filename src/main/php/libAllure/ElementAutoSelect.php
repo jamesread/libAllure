@@ -8,7 +8,7 @@ class ElementAutoSelect extends ElementSelect
     {
         $ret = '';
 
-        $ret .= '<div class = "labelHolder"><label>' . $this->caption . '</label></div><div class = "elementHolder"><input id = "' . $this->name . '" name = "' . $this->name . '" value = "' . $this->value . '">' . '</input></div>';
+        $ret .= '<input id = "' . $this->name . '" name = "' . $this->name . '" value = "' . $this->value . '">' . '</input>';
 
         $acId = uniqid();
         $ret .= '<script type = "text/javascript">var ac' . $acId . ' = [';

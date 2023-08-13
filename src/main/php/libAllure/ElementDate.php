@@ -39,6 +39,6 @@ class ElementDate extends Element
         $today = new \DateTime();
         $today = $today->format($this->format);
 
-        return sprintf('<div class = "labelHolder"><label for = "%s">%s</label></div><div class = "elementHolder"><input id = "%s" name = "%s" value = "%s" /><span class = "dummyLink" onclick = "javascript:document.getElementById(\'%s\').value=\'%s\'">Today</span></div>', $this->name, $this->caption, $this->name, $this->name, $this->value, $this->name, $today);
+        return sprintf('<input id = "%s" name = "%s" value = "%s" /><span class = "dummyLink" onclick = "javascript:document.getElementById(\'%s\').value=\'%s\'">Today</span>', $this->name, $this->name, $this->value, $this->name, $today);
     }
 }

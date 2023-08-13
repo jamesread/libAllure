@@ -26,12 +26,12 @@ class ElementMultiCheck extends Element
 
     public function render()
     {
-        $ret = '<div class = "labelHolder"><label>' . $this->caption . '</label></div><div class = "elementHolder"><ul>';
+        $ret = '<ul>';
         foreach ($this->values as $key => $label) {
             $checked = (in_array($key, $this->getValue())) ? 'checked = "checked" ' : '';
             $ret .= sprintf('<li><input type = "checkbox" name = "%s[]" value = "%s" %s /> <label for = "%s">%s</label></li>', $this->name, $key, $checked, $this->name, $label);
         }
-        $ret .= '</ul></div>';
+        $ret .= '</ul>';
 
         return $ret;
     }

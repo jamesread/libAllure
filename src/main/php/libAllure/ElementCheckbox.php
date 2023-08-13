@@ -12,6 +12,6 @@ class ElementCheckbox extends Element
     public function render()
     {
         $value = ($this->value) ? 'checked = "checked"' : '';
-        return sprintf('<div class = "labelHolder"><label for = "%s">%s</label></div><div class = "elementHolder"><input value = "1" type = "checkbox" id = "%s" name = "%s" %s /></div>', $this->name, $this->caption, $this->name, $this->name, $value);
+        return sprintf('<input value = "1" type = "checkbox" id = "%s" name = "%s" %s />', $this->name, $this->name, $value);
     }
 }
