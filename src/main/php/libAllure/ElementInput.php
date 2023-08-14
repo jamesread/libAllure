@@ -25,7 +25,7 @@ class ElementInput extends Element
         return sprintf('<input %s id = "%s" name = "%s" value = "%s" />', $onChange, $this->name, $this->name, $value);
     }
 
-    public function validateInternals()
+    protected function validateInternals()
     {
         $val = trim($this->getValue());
         $length = strlen($val);
