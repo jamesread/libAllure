@@ -2,10 +2,18 @@
 
 namespace libAllure;
 
-class ElementDate extends Element
+class ElementDate extends ElementInput
 {
     protected $allowEmpty = true;
     protected string $format = 'Y-m-d H:i';
+
+    protected function afterConstruct()
+    {
+        $today = new \DateTime();
+        $today = $today->format($this->format);
+
+        $this->addSuggestedValue($today, 'Today');
+    }
 
     protected function validateInternals()
     {
@@ -32,13 +40,5 @@ class ElementDate extends Element
         } else {
             return $this->value;
         }
-    }
-
-    public function render()
-    {
-        $today = new \DateTime();
-        $today = $today->format($this->format);
-
-        return sprintf('<input id = "%s" name = "%s" value = "%s" /><span class = "dummyLink" onclick = "javascript:document.getElementById(\'%s\').value=\'%s\'">Today</span>', $this->name, $this->name, $this->value, $this->name, $today);
     }
 }
