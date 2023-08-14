@@ -9,7 +9,7 @@ abstract class Shortcuts
         return \libAllure\Sanitizer::getInstance();
     }
 
-    public static function db(): \libAllure\DatabaseFactory
+    public static function db(): \libAllure\Database
     {
         return \libAllure\DatabaseFactory::getInstance();
     }
