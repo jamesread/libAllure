@@ -11,11 +11,19 @@
 		{elseif $element->getType() eq 'submit'}
 			<button value = "{$form->getName()}" name = "{$element->getName()}" type = "submit">{$element->getCaption()}</button>
 		{else}
-			<fieldset>				
+			<fieldset>
 				{$element->render()}
 
 				{if $element->description ne ''}
 				<p class = "description"><img src = "resources/images/icons/help.png" class = "imageIcon" alt = "Form element help" />{$element->description}</p>
+				{/if}
+
+				{if !empty($suggestedValues)}
+				<div>
+					{foreach from = $suggestedValues key = sv item = caption}
+						<span class = "dummyLink" onclick = "document.getElementById('{$element->getName()}').value = '{$sv} '">{$caption}</span>';
+					{/foreach}
+				</div>
 				{/if}
 
 				{if $element->getValidationError() ne ''}

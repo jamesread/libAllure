@@ -42,6 +42,7 @@ abstract class Element implements \JsonSerializable
     protected function afterConstruct()
     {
     }
+
     abstract public function render();
 
     public function addSuggestedValue($value, $caption = null)
@@ -49,6 +50,11 @@ abstract class Element implements \JsonSerializable
         $caption = (empty($caption)) ? $value : $caption;
 
         $this->suggestedValues[$value] = $caption;
+    }
+
+    public function getSuggestedValues(): array
+    {
+        return $this->suggestedValues;
     }
 
     final public function validate()

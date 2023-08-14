@@ -22,15 +22,7 @@ class ElementInput extends Element
 
         $classes = ($this->required) ? ' class = "required" ' : null;
 
-        $suggestedValues = array();
-
-        if (!empty($this->suggestedValues)) {
-            foreach ($this->suggestedValues as $suggestedValue => $caption) {
-                $suggestedValues[] = '<span class = "dummyLink" onclick = "document.getElementById(\'' . $this->name . '\').value = \'' . $suggestedValue . '\'">' . $caption . '</span>';
-            }
-        }
-
-        return sprintf('<input %s id = "%s" name = "%s" value = "%s" /><div>%s</div>', $onChange, $this->name, $this->name, $value, implode(', ', $suggestedValues));
+        return sprintf('<input %s id = "%s" name = "%s" value = "%s" />', $onChange, $this->name, $this->name, $value);
     }
 
     public function validateInternals()
