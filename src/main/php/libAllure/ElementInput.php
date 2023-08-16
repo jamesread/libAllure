@@ -29,9 +29,16 @@ class ElementInput extends Element
 
     protected function validateInternals()
     {
-        $val = trim($this->getValue());
-        $length = strlen($val);
+        $val = $this->getValue();
 
+        if ($val == null) {
+            $length = 0;
+        } else {
+            $val = trim($val);
+            $length = strlen($val);
+        }
+
+        // Check $val after trim() incase it's just whitespace
         if (empty($val) && !$this->required) {
             return;
         }
