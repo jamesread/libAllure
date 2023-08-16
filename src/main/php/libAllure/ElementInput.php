@@ -7,6 +7,8 @@ class ElementInput extends Element
     protected $minLength = 4;
     protected $maxLength = 64;
 
+    public $type = "text";
+    public $extraHtml = "";
 
     public function render()
     {
@@ -22,7 +24,7 @@ class ElementInput extends Element
 
         $classes = ($this->required) ? ' class = "required" ' : null;
 
-        return sprintf('<input %s id = "%s" name = "%s" value = "%s" />', $onChange, $this->name, $this->name, $value);
+        return sprintf('<input type = "%s" %s %s id = "%s" name = "%s" value = "%s" />', $this->type, $this->extraHtml, $onChange, $this->name, $this->name, $value);
     }
 
     protected function validateInternals()
