@@ -327,4 +327,15 @@ SQL;
 
         return $stmt->fetchAll();
     }
+
+    public static function getCountLocalUsers(): int
+    {
+        $sql = 'SELECT count(id) AS count FROM users';
+        $stmt = DatabaseFactory::getInstance()->prepare($sql);
+        $stmt->execute();
+
+        $row = $stmt->fetchRow();
+
+        return intval($row['count']);
+    }
 }
