@@ -76,6 +76,30 @@ class User
         return new User($username);
     }
 
+    private function grantPermission(string $permissionName): bool
+    {
+        $sql = 'SELECT `id` FROM permissions WHERE `key` = := :permissionName LIMIT 1';
+        $stmt = DatabaseFactory::getInstance()->prepare($sql);
+        $stmt->execute([
+            'permissionName' => $permissionName
+        ]);
+
+        $permission = $stmt->fetchRow();
+
+        if (!$permission) {
+            return false;
+        } else {
+            $sql = 'INSERT INTO privileges_u (user, permission) VALUES (:user, :permission)';
+            $stmt = DatabaseFactory::getInstance()->prepare($sql);
+            $stmt->execute([
+                ':user' => $this->getId(),
+                ':permission' => $permission['id'],
+            ]);
+
+            return true;
+        }
+    }
+
     private function getPrivilegesFromSupplimentaryGroups(): array
     {
         $ret = [];
