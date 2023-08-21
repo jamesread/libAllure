@@ -76,7 +76,7 @@ class User
         return new User($username);
     }
 
-    private static function grantPermissionToUid(string $permissionName, int $uid): bool
+    public static function grantPermissionToUid(string $permissionName, int $uid): bool
     {
         $sql = 'SELECT `id` FROM permissions WHERE `key` = := :permissionName LIMIT 1';
         $stmt = DatabaseFactory::getInstance()->prepare($sql);
