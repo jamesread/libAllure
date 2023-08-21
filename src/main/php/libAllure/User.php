@@ -76,7 +76,7 @@ class User
         return new User($username);
     }
 
-    private function grantPermission(string $permissionName): bool
+    private static function grantPermissionToUid(string $permissionName, int $uid): bool
     {
         $sql = 'SELECT `id` FROM permissions WHERE `key` = := :permissionName LIMIT 1';
         $stmt = DatabaseFactory::getInstance()->prepare($sql);
@@ -92,7 +92,7 @@ class User
             $sql = 'INSERT INTO privileges_u (user, permission) VALUES (:user, :permission)';
             $stmt = DatabaseFactory::getInstance()->prepare($sql);
             $stmt->execute([
-                ':user' => $this->getId(),
+                ':user' => $uid,
                 ':permission' => $permission['id'],
             ]);
 
