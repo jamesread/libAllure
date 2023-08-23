@@ -9,6 +9,9 @@ class ElementFile extends Element
     public $isImage = true;
     public $destinationDir = '/tmp/';
     public $destinationFilename = 'unnamed';
+
+    public $tempDir = '/tmp/libAllureImageUploads/';
+
     private $tempName = null;
 
     public $imageMaxW = 80;
@@ -67,7 +70,7 @@ class ElementFile extends Element
 
     private function moveFileToTemp()
     {
-        $this->tempName = tempnam('tempUploads', uniqid());
+        $this->tempName = tempnam($this->tempDir, uniqid());
         $mov = @move_uploaded_file($_FILES[$this->name]['tmp_name'], $this->tempName);
 
         if (!$mov) {
