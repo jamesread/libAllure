@@ -6,6 +6,8 @@ class ElementFile extends Element
 {
     private $imageResource = null;
 
+    public $acceptsFilter = "";
+
     public $isImage = true;
     public $destinationDir = '/tmp/';
     public $destinationFilename = 'unnamed';
@@ -83,38 +85,38 @@ class ElementFile extends Element
         $type = exif_imagetype($this->tempName);
 
         if ($type == IMAGETYPE_JPEG) {
-            $this->imageResource = imagecreatefromjpeg($this->tempName);
+            $this->imageResource = \imagecreatefromjpeg($this->tempName);
         } elseif ($type == IMAGETYPE_GIF) {
-            $this->imageResource = imagecreatefromgif($this->tempName);
+            $this->imageResource = \imagecreatefromgif($this->tempName);
         } elseif ($type == IMAGETYPE_PNG) {
-            $this->imageResource = imagecreatefrompng($this->tempName);
+            $this->imageResource = \imagecreatefrompng($this->tempName);
         } else {
             $this->setValidationError("Unsupported file type.");
             return;
         }
 
-        if (imagesx($this->imageResource) > $this->imageMaxW || imagesy($this->imageResource) > $this->imageMaxH) {
+        if (\imagesx($this->imageResource) > $this->imageMaxW || \imagesy($this->imageResource) > $this->imageMaxH) {
             if ($this->autoResize) {
                 $this->imageResource = self::resizeImage($this->imageResource, $this->imageMaxW, $this->imageMaxH);
             } else {
-                $this->setValidationError('Image too big, images may up to ' . $this->imageMaxW . 'x' . $this->imageMaxH . ' pixels, that was ' . imagesx($this->imageResource) . 'x' . imagesy($this->imageResource) . ' pixels.');
+                $this->setValidationError('Image too big, images may up to ' . $this->imageMaxW . 'x' . $this->imageMaxH . ' pixels, that was ' . \imagesx($this->imageResource) . 'x' . \imagesy($this->imageResource) . ' pixels.');
             }
         }
     }
 
     public static function resizeImage($srcImage, $finW, $finH)
     {
-        $imageResized = imagecreatetruecolor($finW, $finH);
-        imagealphablending($srcImage, false);
-        imageinterlace($srcImage, true);
+        $imageResized = \imagecreatetruecolor($finW, $finH);
+        \imagealphablending($srcImage, false);
+        \imageinterlace($srcImage, true);
 
-        imagealphablending($imageResized, false);
-        imageinterlace($imageResized, true);
+        \imagealphablending($imageResized, false);
+        \imageinterlace($imageResized, true);
 
         $srcX = 0;
         $srcY = 0;
-        $srcW = imagesx($srcImage);
-        $srcH = imagesy($srcImage);
+        $srcW = \imagesx($srcImage);
+        $srcH = \imagesy($srcImage);
 
         $offsetX = 0;
         $offsetY = 0;
@@ -132,10 +134,10 @@ class ElementFile extends Element
             $offsetY = ($finH - $dstH) / 2;
         }
 
-        $backgroundColor = imagecolorallocate($imageResized, 255, 255, 255);
-        imagefill($imageResized, 0, 0, $backgroundColor);
+        $backgroundColor = \imagecolorallocate($imageResized, 255, 255, 255);
+        \imagefill($imageResized, 0, 0, $backgroundColor);
 
-        imagecopyresampled($imageResized, $srcImage, $offsetX, $offsetY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH);
+        \imagecopyresampled($imageResized, $srcImage, $offsetX, $offsetY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH);
 
         return $imageResized;
     }
@@ -155,9 +157,8 @@ class ElementFile extends Element
         if (!$this->wasAnythingUploaded()) {
             return;
         }
-        echo 'saving to ' . $this->destinationDir . $this->destinationFilename;
 
-        imagejpeg($this->imageResource, $this->destinationDir . DIRECTORY_SEPARATOR . $this->destinationFilename);
+        \imagejpeg($this->imageResource, $this->destinationDir . DIRECTORY_SEPARATOR . $this->destinationFilename);
     }
 
     public function savePng()
@@ -166,13 +167,13 @@ class ElementFile extends Element
             return;
         }
 
-        imagealphablending($this->imageResource, true);
-        imagesavealpha($this->imageResource, true);
-        imagepng($this->imageResource, $this->destinationDir . DIRECTORY_SEPARATOR . $this->destinationFilename);
+        \imagealphablending($this->imageResource, true);
+        \imagesavealpha($this->imageResource, true);
+        \imagepng($this->imageResource, $this->destinationDir . DIRECTORY_SEPARATOR . $this->destinationFilename);
     }
 
     public function render()
     {
-        return sprintf('<input name = "%s" type = "file" />', $this->name);
+        return sprintf('<input name = "%s" accept = "%s" type = "file" />', $this->name, $this->acceptsFilter);
     }
 }
