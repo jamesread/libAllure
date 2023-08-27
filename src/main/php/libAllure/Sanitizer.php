@@ -20,15 +20,31 @@
 
 namespace libAllure;
 
+/**
+ * Sanitizes and filters input. 
+ *
+ * This class has an unusual history, and the first thing you will probably ask 
+ * is why on earth this class exists when PHP has filter_ functions. 
+ *
+ * It looks like PHP's filter_ function  were added in PHP 5.2 (~2006), yet 
+ * this class was probably written around2005-2008 - and PHP 5.2 either probably 
+ * was not available on my server, or I just didn't know about the filter_ 
+ * functions.
+ *
+ * However, the filter_ functions interface is incredibly goofy (array of 
+ * $options, etc), so this class has now been re-written as a wrapper around
+ * the filter_ functions.
+ */
 class Sanitizer
 {
     public $filterAllowUndefined = true;
+    public $onUndefinedDoVariableHunt = false;
 
-    private const INPUT_GET = 1;
-    private const INPUT_POST = 2;
-    private const INPUT_REQUEST = 3;
-    private const INPUT_SERVER = 4;
-    private const INPUT_LITERAL = 5;
+    public const INPUT_GET = 1;
+    public const INPUT_POST = 2;
+    public const INPUT_REQUEST = 3; // Not available in PHP's filter functions.
+    public const INPUT_SERVER = 4;
+    public const INPUT_COOKIE = 5;
 
     public const FORMAT_FOR_DB = 1;
     public const FORMAT_FOR_HTML = 2;
@@ -36,8 +52,14 @@ class Sanitizer
 
     private $inputSource = self::INPUT_REQUEST;
     private $variableNamePrefixes = array ('form');
+
     private static $instance;
 
+    /**
+     * The constructor is still public as it's quite likely that users will want
+     * to create instances of this class with different options. This singleton
+     * method is useful for getting an instance with sane defaults. 
+     */
     public static function getInstance()
     {
         if (self::$instance == null) {
@@ -57,32 +79,41 @@ class Sanitizer
         $this->inputSource = $inputSource;
     }
 
-    private function getInput($name)
+    private function getInputSourceArray(): array
     {
         switch ($this->inputSource) {
-            case self::INPUT_GET:
-                $source = $_GET;
-                break;
-            case self::INPUT_POST:
-                $source = $_POST;
-                break;
-            case self::INPUT_REQUEST:
-                $source = $_REQUEST;
-                break;
-            case self::INPUT_SERVER:
-                $source = $_SERVER;
-                break;
-            case self::INPUT_LITERAL:
-                return $name;
+        case self::INPUT_GET: return $_GET;
+        case self::INPUT_POST: return $_POST;
+        case self::INPUT_REQUEST: return $_REQUEST;
+        case self::INPUT_SERVER: return $_SERVER;
+        case self::INPUT_COOKIE: return $_COOKIE;
             default:
                 throw new \Exception('Invalid input source');
         }
+    }
+
+    public function hasInput($name): bool
+    {
+        return $this->getInput($name) !== null;
+    }
+
+    private function getInput($name)
+    {
+        $source = $this->getInputSourceArray();
 
         if (isset($source[$name])) {
             return $source[$name];
-        } else {
-            return $this->variableHunt($source, $name);
         }
+
+        if ($this->onUndefinedDoVariableHunt) {
+            $val = $this->variableHunt($source, $name);
+        }
+
+        if (!$this->filterAllowUndefined) {
+            throw new \Exception('Input variable not found: ' . $name);
+        }
+
+        return null;
     }
 
     private function variableHunt(array $source, $name)
@@ -93,11 +124,7 @@ class Sanitizer
             }
         }
 
-        if ($this->filterAllowUndefined) {
-            return false;
-        } else {
-            throw new \Exception('Input variable not found: ' . $name);
-        }
+        return false;
     }
 
     public function filterId()
@@ -167,13 +194,20 @@ class Sanitizer
         return $content;
     }
 
-    public function filterString($name)
+    public function filterString($name, $default = null): mixed
     {
-        return (string) $this->getInput($name);
+        return $this->filterInputString($name, $default);
     }
 
-    public function filterFilepath()
+    public function filterInputString($name, $default = null): mixed
     {
+        $v = $this->getInput($name);
+
+        if (is_string($v)) {
+            return filter_var($v, FILTER_UNSAFE_RAW);
+        } else {
+            return $default;
+        }
     }
 
     public function escapeStringForClean($content)
@@ -187,7 +221,9 @@ class Sanitizer
 
     public function escapeStringForDatabase($content)
     {
-        return $this->escapeStringForClean($content);
+        trigger_error('Method ' . __METHOD__ . ' is deprecated', E_USER_DEPRECATED);
+
+        return null;
     }
 
     public function escapeStringForHtml($content)
@@ -202,7 +238,6 @@ class Sanitizer
     {
         return $content;
     }
-
 
     public function formatStringForDatabase($content)
     {
@@ -241,10 +276,18 @@ class Sanitizer
         }
     }
 
-    public function filterEnum($name, $accepted, $default = null)
+    public function filterEnum($name, array $accepted, $default = null)
     {
-        $value = $this->filterString($name);
+        return $this->filterInputEnum($name, $accepted, $default);
+    }
 
+    public function filterInputEnum($name, array $accepted, $default)
+    {
+        return $this->filterVariableEnum($this->filterInputString($name), $accepted, $default);
+    }
+
+    public function filterVariableEnum($value, array $accepted, $default = null)
+    {
         if (in_array($value, $accepted)) {
             return $value;
         } else {
