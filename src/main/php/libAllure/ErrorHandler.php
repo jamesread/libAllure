@@ -203,6 +203,8 @@ class ErrorHandler
             case '401':
                 $message = 'Unauthorized.';
                 break;
+            default:
+                $message = 'Unknown (' . $code . ')';
         }
 
         $this->render('HTTP Error', $message, $code);

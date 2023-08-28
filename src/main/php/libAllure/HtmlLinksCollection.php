@@ -62,7 +62,7 @@ class HtmlLinksCollection implements \Iterator, \Countable
         $this->iteratorPosition = 0;
     }
 
-    public function getChildCollection($linkTitle = null)
+    public function getChildCollection($title = null)
     {
         if (empty($title)) {
             $title = $this->collection[$this->iteratorPosition]['title'];

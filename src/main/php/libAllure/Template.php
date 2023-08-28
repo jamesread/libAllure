@@ -177,14 +177,8 @@ class Template extends \Smarty
         parent::display($template, $cacheId, $compileId);
 
         foreach ($this->autoClearVars as $varName) {
-            if (method_exists($this, 'get_template_vars')) {
-                if ($this->get_template_vars($varName)) {
-                    $this->clear_assign($varName);
-                }
-            } elseif (method_exists($this, 'tpl_vars')) {
-                if ($this->tpl_vars($varName)) {
-                    $this->clear_assign($varName);
-                }
+            if ($this->getTemplateVars($varName)) {
+                $this->clearAssign($varName);
             }
         }
     }
