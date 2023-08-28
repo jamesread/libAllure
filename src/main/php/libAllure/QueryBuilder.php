@@ -304,7 +304,7 @@ class QueryBuilder
 
     /**
      * Builds the actual SQL.
-     * @return Cake asdf
+     * @return string The SQL string.
      */
     public function build(): string
     {

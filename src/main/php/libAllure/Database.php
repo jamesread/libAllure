@@ -31,7 +31,7 @@ class Database extends \PDO
     public $queryCount = 0;
 
     /**
-    @throws PDOException if it cannot connect
+    @throws \PDOException if it cannot connect
     */
     public function __construct($dsn, $username, $password)
     {

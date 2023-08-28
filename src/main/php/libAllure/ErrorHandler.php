@@ -29,10 +29,10 @@ class ErrorHandler
     /**
      * Constructs the new class.
      *
-     * @param greedy Whether or not this class can be greedy: is allowed to
+     * @param $greedy Whether or not this class can be greedy: is allowed to
      * capture all types of errors that it can bind to.
      */
-    public function __construct($greedy = true)
+    public function __construct(bool $greedy = true)
     {
         if ($greedy) {
             $this->beGreedy();
@@ -63,12 +63,12 @@ class ErrorHandler
     /**
      * Print the error out.
      *
-     * @param trigger What triggored this error.
-     * @param message The message for the error.
-     * @param code The code for the error.
-     * @param file The file that this error came from.
-     * @param line The line that this error came from.
-     * @param stacktrace A stacktrace leading up to this error ( should be a
+     * @param $trigger What triggored this error.
+     * @param $message The message for the error.
+     * @param $code The code for the error.
+     * @param $file The file that this error came from.
+     * @param $line The line that this error came from.
+     * @param $stacktrace A stacktrace leading up to this error ( should be a
      * array).
      */
     protected function render($trigger, $message, $code = null, $file = null, $line = null, $stacktrace = null)
