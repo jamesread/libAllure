@@ -21,17 +21,17 @@
 namespace libAllure;
 
 /**
- * Sanitizes and filters input. 
+ * Sanitizes and filters input.
  *
- * This class has an unusual history, and the first thing you will probably ask 
- * is why on earth this class exists when PHP has filter_ functions. 
+ * This class has an unusual history, and the first thing you will probably ask
+ * is why on earth this class exists when PHP has filter_ functions.
  *
- * It looks like PHP's filter_ function  were added in PHP 5.2 (~2006), yet 
- * this class was probably written around2005-2008 - and PHP 5.2 either probably 
- * was not available on my server, or I just didn't know about the filter_ 
+ * It looks like PHP's filter_ function  were added in PHP 5.2 (~2006), yet
+ * this class was probably written around2005-2008 - and PHP 5.2 either probably
+ * was not available on my server, or I just didn't know about the filter_
  * functions.
  *
- * However, the filter_ functions interface is incredibly goofy (array of 
+ * However, the filter_ functions interface is incredibly goofy (array of
  * $options, etc), so this class has now been re-written as a wrapper around
  * the filter_ functions.
  */
@@ -58,7 +58,7 @@ class Sanitizer
     /**
      * The constructor is still public as it's quite likely that users will want
      * to create instances of this class with different options. This singleton
-     * method is useful for getting an instance with sane defaults. 
+     * method is useful for getting an instance with sane defaults.
      */
     public static function getInstance()
     {
@@ -82,11 +82,16 @@ class Sanitizer
     private function getInputSourceArray(): array
     {
         switch ($this->inputSource) {
-        case self::INPUT_GET: return $_GET;
-        case self::INPUT_POST: return $_POST;
-        case self::INPUT_REQUEST: return $_REQUEST;
-        case self::INPUT_SERVER: return $_SERVER;
-        case self::INPUT_COOKIE: return $_COOKIE;
+            case self::INPUT_GET:
+                return $_GET;
+            case self::INPUT_POST:
+                return $_POST;
+            case self::INPUT_REQUEST:
+                return $_REQUEST;
+            case self::INPUT_SERVER:
+                return $_SERVER;
+            case self::INPUT_COOKIE:
+                return $_COOKIE;
             default:
                 throw new \Exception('Invalid input source');
         }

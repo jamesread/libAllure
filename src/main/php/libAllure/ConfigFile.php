@@ -2,7 +2,7 @@
 
 namespace libAllure;
 
-class ConfigFile 
+class ConfigFile
 {
     private array $keys;
 
@@ -23,7 +23,7 @@ class ConfigFile
         if (is_array($additionalKeys)) {
             $this->keys = array_merge($this->keys, $additionalKeys);
         }
-    }    
+    }
 
     public function tryLoad(array $possiblePaths)
     {
@@ -70,7 +70,7 @@ class ConfigFile
     {
         if (isset($this->keys[$k])) {
             return $this->keys[$k];
-        } 
+        }
 
         return null;
     }
