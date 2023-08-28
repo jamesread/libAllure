@@ -23,12 +23,10 @@ namespace libAllure;
 class Scheduler
 {
     private $db;
-    private $startTime;
 
     public function __construct(\libAllure\Database $db)
     {
         $this->db = $db;
-        $this->startTime = time();
     }
 
     public function executeOverdueJobs()

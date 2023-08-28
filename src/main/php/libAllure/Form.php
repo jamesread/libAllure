@@ -43,13 +43,11 @@ abstract class Form
 {
     public static $registeredForms = array();
 
-    private $rules = array();
     protected $elements = array();
     public $scripts = array();
     private $name;
     private $submitter;
     private $title = '';
-    private $generalError;
     private $action;
 
     protected $enctype = 'multipart/form-data';
@@ -259,11 +257,6 @@ abstract class Form
         } else {
             return $element;
         }
-    }
-
-    public function setGeneralError($generalError)
-    {
-        $this->generalError = $generalError;
     }
 
     public static function strToForm($s)

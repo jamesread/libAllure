@@ -16,6 +16,5 @@ class ElementButton extends Element
     public function render()
     {
         return '<button name = "' . $this->name . '" type = "' . $this->type . '" value = "' . $this->value . '">' . $this->caption . '</button>';
-        return '<input name = "' . $this->name . '" type = "' . $this->type . '" value = "' . $this->caption . '" />';
     }
 }

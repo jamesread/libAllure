@@ -43,13 +43,10 @@ class Database extends \PDO
         //$this->setAttribute(PDO::MYSQL_ATTR_DIRECT_QUERY, true);
     }
 
-    public function prepareSelectById($table, $id)
+    public function prepareSelectById($table, $id, ...$fields)
     {
-        $args = func_get_args();
-        $table = array_shift($args);
-        $id = intval(array_shift($args));
+        $fields = implode(', ', array_merge(array('id'), $fields));
 
-        $fields = implode(array_merge(array('id'), $args), ', ');
         $sql = "SELECT {$fields} FROM {$table} WHERE id = :id";
         $stmt = $this->prepare($sql);
         $stmt->bindValue(':id', $id);

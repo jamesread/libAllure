@@ -98,7 +98,7 @@ class Template extends \Smarty
     {
         if ($test == null) {
             return $onNull;
-        } elseif ($test) {
+        } elseif ($test == true) {
             return $onTrue;
         } else {
             return $onFalse;

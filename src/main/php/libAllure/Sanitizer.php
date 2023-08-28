@@ -51,7 +51,6 @@ class Sanitizer
     public const FORMAT_FOR_ALL = 64;
 
     private $inputSource = self::INPUT_REQUEST;
-    private $variableNamePrefixes = array ('form');
 
     private static $instance;
 

@@ -6,7 +6,6 @@ class ElementNumeric extends ElementInput
 {
     private $allowNegative = false;
     private $allowFloatingPoint = false;
-    private $allowNonDenery = false;
     private $maximum = PHP_INT_MAX;
     private $minimum = 0;
 
@@ -19,10 +18,6 @@ class ElementNumeric extends ElementInput
     public function setAllowFloatingPoint($allowFloatingPoint)
     {
         $this->allowFloatingPoint = $allowFloatingPoint;
-    }
-
-    public function setAllowNonDenery($allowNonDenary)
-    {
     }
 
     public function setBounds($minimum, $maximum)

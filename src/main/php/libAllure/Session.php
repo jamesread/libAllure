@@ -33,9 +33,6 @@ class Session
     public static $cookieSecure = false;
     public static $cookieHttpOnly = true;
 
-    // static copy of $_SESSION['user']
-    private static $user;
-
     protected function __construct()
     {
     }
