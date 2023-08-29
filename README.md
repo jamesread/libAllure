@@ -48,14 +48,14 @@ use \libAllure\Form;
 Copy the contents of `/src/main/php/` to somewhere on your include path, like 
 `/usr/share/php/` on most Linux distributions. So that you have `/usr/share/php/libAllure/ErrorHander.php`, `/usr/share/php/libAllure/Database.php`, etc.
 
-## API
+## API Examples & Quick Reference
+
+**Full API Documentation**: http://jamesread.github.io/libAllure/
 
 ### Database
 Wrapper around **PDO**.
 
 ```php
-require_once 'libAllure/Database.php';
-
 use \libAllure\Database;
 
 $database = new Database('mysql:dbname=testdb;host=127.0.0.1', 'username', 'password');
@@ -70,8 +70,6 @@ var_dump($results->fetchAll());
 Custom error handler that complains at the slightest thing, makes debugging nice and easy.
 
 ```php
-require_once 'libAllure/ErrorHandler.php';
-
 use \libAllure\ErrorHandler;
 
 $handler = new ErrorHandler();
@@ -84,9 +82,6 @@ throw new Exception('This is a test');
 Custom form handling code. 
 
 ```php
-require_once 'libAllure/Form.php';
-require_once 'libAllure/Template.php';
-
 use \libAllure\ElementInput;
 use \libAllure\Template;
 
