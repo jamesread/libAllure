@@ -38,7 +38,7 @@ namespace libAllure;
 class Sanitizer
 {
     public $filterAllowUndefined = true;
-    public $onUndefinedDoVariableHunt = false;
+    private $onUndefinedSearchPrefixKeys = false;
 
     public const INPUT_GET = 1;
     public const INPUT_POST = 2;
@@ -66,6 +66,11 @@ class Sanitizer
         }
 
         return self::$instance;
+    }
+
+    public function enableSearchingPrefixKeys()
+    {
+        $this->onUndefinedSearchPrefixKeys = true;
     }
 
     public function triggerFailFilter($message)
@@ -109,8 +114,12 @@ class Sanitizer
             return $source[$name];
         }
 
-        if ($this->onUndefinedDoVariableHunt) {
-            $val = $this->variableHunt($source, $name);
+        if ($this->onUndefinedSearchPrefixKeys) {
+            foreach ($source as $key => $value) {
+                if (strstr($key, '-' . $name) !== false) {
+                    return $source[$key];
+                }
+            }
         }
 
         if (!$this->filterAllowUndefined) {
@@ -118,17 +127,6 @@ class Sanitizer
         }
 
         return null;
-    }
-
-    private function variableHunt(array $source, $name)
-    {
-        foreach ($source as $key => $value) {
-            if (strstr($key, $name) !== false) {
-                return $source[$key];
-            }
-        }
-
-        return false;
     }
 
     public function filterId()
