@@ -78,19 +78,27 @@ class QueryBuilder
         return $this;
     }
 
-    protected function addFieldPrefix($field)
+    protected function addFieldPrefix($field, $alias = null)
     {
+        /*
         if (strpos($field, '!') !== false) {
             return str_replace('!', '', $field);
         }
+         */
 
-        if (strpos($field, '.') === false) {
-            $alias = $this->lastAliasUsed . '.';
+        if ($alias == null) {
+            if (strpos($field, '.') !== false) {
+                $prefix = ''; // field already has a dot
+            } else {
+                $prefix = $this->lastAliasUsed . '.';
+            }
         } else {
-            $alias = '';
+            if (strpos($field, '.') === false) {
+                $prefix = $alias . '.'; // add the dot
+            }
         }
 
-        return $alias . $field;
+        return $prefix . $field;
     }
 
     public function where($field, $operator, $value)
@@ -229,6 +237,11 @@ class QueryBuilder
     public function onEq($field, $value)
     {
         return $this->on($field, '=', $value);
+    }
+
+    public function onFromFieldsEq($fromField, $joinedField)
+    {
+        return $this->onEq($this->addFieldPrefix($fromField, $this->from['alias']), $this->addFieldPrefix($joinedField));
     }
 
     public function onGt($field, $value)

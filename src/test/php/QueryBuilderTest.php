@@ -98,7 +98,7 @@ class QueryBuilderTest extends TestCase
     public function testGroup() {
         $qb = new QueryBuilder();
         $qb->fields('p.id', 'p.forename')->from('people');
-        $qb->groupBy('p.forename');
+        $qb->groupBy('forename');
 
         $this->assertEquals('SELECT p.id, p.forename FROM people p GROUP BY p.forename ORDER BY p.id', $qb->build());
     }
@@ -122,6 +122,16 @@ class QueryBuilderTest extends TestCase
 
         $sql = 'SELECT f.username, o.password FROM foo f LEFT JOIN fffoobar o ON f.username = o.id ORDER BY f.username';
         $this->assertEquals($sql, $qb->build());
+    }
+
+    public function testJoinOnWhenDontKnowTableAliases() {
+        $qb = new QueryBuilder();
+        $qb->from('foo')->fields('username');
+        $qb->join('fffoobar')->onFromFieldsEq('username', 'id')->fields('password');
+
+        $sql = 'SELECT f.username, o.password FROM foo f LEFT JOIN fffoobar o ON f.username = o.id ORDER BY f.username';
+        $this->assertEquals($sql, $qb->build());
+
     }
 }
 
