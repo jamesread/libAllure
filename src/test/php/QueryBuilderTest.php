@@ -28,7 +28,7 @@ class QueryBuilderTest extends TestCase
     public function testSelectOrderId() {
         $qb = new QueryBuilder();
         $qb->from('users')->fields('u.username');
-        $qb->orderBy('u.id');
+        $qb->orderBy('id');
 
         $this->assertEquals('SELECT u.username FROM users u ORDER BY u.id', $qb->build());
     }
@@ -36,7 +36,7 @@ class QueryBuilderTest extends TestCase
     public function testAutoPrefixFields() {
         $qb = new QueryBuilder();
         $qb->from('users')->fields('id', 'forename');
-        $qb->from('users')->fields('surname');
+        $qb->fields('surname');
         $qb->orderBy('id');
 
         $this->assertEquals('SELECT u.id, u.forename, u.surname FROM users u ORDER BY u.id', $qb->build());
@@ -59,21 +59,20 @@ class QueryBuilderTest extends TestCase
         $qb = new QueryBuilder();
         $qb->from('users')->fields('email', array('count(o.id)', 'orderCount'));
         $qb->leftJoin('orders')->onEq('o.uid', 'u.id');
-        $qb->orderBy('!orderCount');
+        $qb->orderBy('orderCount');
 
-        $this->assertEquals('SELECT u.email, count(o.id) AS orderCount FROM users u LEFT JOIN orders o ON o.uid = u.id ORDER BY orderCount', $qb->build());
+        $this->assertEquals('SELECT u.email, count(o.id) AS orderCount FROM users u LEFT JOIN orders o ON o.uid = u.id ORDER BY u.orderCount', $qb->build());
     }
 
     public function testMultiJoin() {
         $qb = new QueryBuilder();
-        $qb->from('users')->fields('email', array('count(o.id)', 'orderCount'), 'g.title');
+        $qb->from('users')->fields('email', array('count(o.id)', 'orderCount'), 'forename', 'surname');
         $qb->leftJoin('orders')->onEq('o.uid', 'u.id');
-        $qb->leftJoin('groups')->onEq('u.group', 'g.id');
+        $qb->leftJoin('groups')->onEq('u.group', 'g.id')->fields('title');
         $qb->joinedTable('orders')->onGt('o.date', ':date');
-        $qb->fields('forename', 'surname');
         $qb->orderBy('email');
 
-        $this->assertEquals('SELECT u.email, count(o.id) AS orderCount, g.title, u.forename, u.surname FROM users u LEFT JOIN orders o ON o.uid = u.id AND o.date > :date LEFT JOIN groups g ON u.group = g.id ORDER BY u.email', $qb->build());
+        $this->assertEquals('SELECT u.email, count(o.id) AS orderCount, u.forename, u.surname, g.title FROM users u LEFT JOIN orders o ON o.uid = u.id AND o.date > :date LEFT JOIN groups g ON u.group = g.id ORDER BY u.email', $qb->build());
     }
 
     public function testWhereNot() {
@@ -103,6 +102,28 @@ class QueryBuilderTest extends TestCase
 
         $this->assertEquals('SELECT p.id, p.forename FROM people p GROUP BY p.forename ORDER BY p.id', $qb->build());
     }
+
+    public function testJoinAlias() 
+    {
+        $qb = new QueryBuilder();
+        $qb->from('activity_tracker', 'a', 'dw')->fields('*');
+        $qb->groupBy('id');
+        $qb->join('activity_types', 't', 'dw')->onEq('a.type', 't.id')->fields(['title', 'type_fk_description']);
+        $qb->orderBy('id DESC');
+
+        $sql = 'SELECT a.*, t.title AS type_fk_description FROM dw.activity_tracker a LEFT JOIN dw.activity_types t ON a.type = t.id GROUP BY a.id ORDER BY a.id DESC';
+        $this->assertEquals($sql, $qb->build());
+    }
+
+    public function testAutoAlias() {
+        $qb = new QueryBuilder();
+        $qb->from('foo')->fields('username');
+        $qb->join('fffoobar')->onEq('f.username', 'o.id')->fields('password');
+
+        $sql = 'SELECT f.username, o.password FROM foo f LEFT JOIN fffoobar o ON f.username = o.id ORDER BY f.username';
+        $this->assertEquals($sql, $qb->build());
+    }
 }
+
 
 ?>

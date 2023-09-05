@@ -16,6 +16,8 @@ class QueryBuilder
     private $lastAliasUsed = null;
     private $lastJoinedTable = null;
 
+    private $tableAliases = [];
+
     public function __construct($verb = 'SELECT')
     {
         $verb = strtoupper($verb);
@@ -26,7 +28,7 @@ class QueryBuilder
     public function orderBy(string ...$fields)
     {
         foreach ($fields as $arg) {
-            $arg = $this->addFieldPrefix($arg);
+            $arg = $this->from['alias'] . '.' . $arg;
 
             array_push($this->orderBy, $arg);
         }
@@ -36,9 +38,11 @@ class QueryBuilder
 
     public function from(string $tableName, string $alias = null, string $database = null)
     {
-        if ($alias == null) {
-            $alias = substr($tableName, 0, 1);
+        if ($this->from !== null) {
+            throw new \Exception('QB from() already used');
         }
+
+        $alias = $this->buildTableAlias($tableName, $alias, $database);
 
         $this->from = array(
             'alias' => $alias,
@@ -163,36 +167,61 @@ class QueryBuilder
         }
     }
 
-    public function join($tbl, $alias = null)
+    public function buildTableAlias($tbl, $alias, $database)
     {
-        return $this->leftJoin($tbl, $alias);
-    }
+        $existingAliases = array_column($this->joins, 'alias');
 
-    public function leftJoin($tbl, $alias = null)
-    {
-        return $this->joinImpl('LEFT', $tbl, $alias);
-    }
-
-    public function joinImpl($direction, $tbl, $alias = null)
-    {
-        if ($alias == null) {
-            $alias = substr($tbl, 0, 1);
+        if (isset($this->from)) {
+            $existingAliases[] = $this->from['alias'];
         }
+
+        if ($alias == null) {
+            for ($i = 0; $i < strlen($tbl); $i++) {
+                $alias = $tbl[$i];
+
+                if (!in_array($alias, $existingAliases)) {
+                    return $alias;
+                }
+            }
+
+            throw new Exception('Unique alias not possible, tbl: ' . $tbl);
+        }
+
+
+        return $alias;
+    }
+
+    public function join($tbl, $alias = null, $database = null)
+    {
+        return $this->leftJoin($tbl, $alias, $database);
+    }
+
+    public function leftJoin($tbl, $alias = null, $database = null)
+    {
+        return $this->joinImpl('LEFT', $tbl, $alias, $database);
+    }
+
+    public function joinImpl($direction, $tbl, $alias = null, $database = null)
+    {
+        $alias = $this->buildTableAlias($tbl, $alias, $database);
 
         $this->joins[$tbl] = array(
             'direction' => $direction,
+            'database' => $database,
             'table' => $tbl,
             'alias' => $alias
         );
 
         $this->lastJoinedTable = $tbl;
+        $this->lastAliasUsed = $alias;
 
         return $this;
     }
 
-    public function joinedTable($tbl)
+    public function joinedTable($tbl = null)
     {
         $this->lastJoinedTable = $tbl;
+        $this->lastAliasUsed = $this->joins[$tbl]['alias'];
 
         return $this;
     }
@@ -225,7 +254,7 @@ class QueryBuilder
 
     public function group($field)
     {
-        $this->group = $field;
+        $this->group = $this->addFieldPrefix($field);
 
         return $this;
     }
@@ -276,7 +305,14 @@ class QueryBuilder
         $ret = '';
 
         foreach ($this->joins as $join) {
-            $ret .= ' ' . $join['direction'] . ' JOIN ' . $join['table'] . ' ' . $join['alias'] . ' ' . $this->buildJoinConditions($join['table']);
+            $db = '';
+
+            if (!empty($join['database'])) {
+                $db = $join['database'] . '.';
+            }
+
+
+            $ret .= ' ' . $join['direction'] . ' JOIN ' . $db . $join['table'] . ' ' . $join['alias'] . ' ' . $this->buildJoinConditions($join['table']);
         }
 
         return $ret;
