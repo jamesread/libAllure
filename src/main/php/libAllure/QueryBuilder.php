@@ -76,27 +76,24 @@ class QueryBuilder
         return $this;
     }
 
+    /** 
+    A field "prefix" is the table alias, plus a dot. 
+
+    If the field already contains an alias, it is not added again.
+
+    If the alias param is null, the last alias is used.
+    */
     protected function addFieldPrefix($field, $alias = null)
-    {
-        /*
-        if (strpos($field, '!') !== false) {
-            return str_replace('!', '', $field);
-        }
-         */
+    {   
+        if (strpos($field, '.') === false) {
+            if ($alias == null) {
+                $alias = $this->lastAliasUsed;
+            }
 
-        if ($alias == null) {
-            if (strpos($field, '.') !== false) {
-                $prefix = ''; // field already has a dot
-            } else {
-                $prefix = $this->lastAliasUsed . '.';
-            }
-        } else {
-            if (strpos($field, '.') === false) {
-                $prefix = $alias . '.'; // add the dot
-            }
+            return $alias . '.' . $field;
         }
 
-        return $prefix . $field;
+        return $field;
     }
 
     public function where($field, $operator, $value)
