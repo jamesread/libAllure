@@ -16,8 +16,6 @@ class QueryBuilder
     private $lastAliasUsed = null;
     private $lastJoinedTable = null;
 
-    private $tableAliases = [];
-
     public function __construct($verb = 'SELECT')
     {
         $verb = strtoupper($verb);
@@ -192,7 +190,7 @@ class QueryBuilder
                 }
             }
 
-            throw new Exception('Unique alias not possible, tbl: ' . $tbl);
+            throw new \Exception('Unique alias not possible, tbl: ' . $tbl);
         }
 
 
