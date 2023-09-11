@@ -230,6 +230,10 @@ class Sanitizer
 
     public function escapeStringForHtml($content)
     {
+        if ($content == null) {
+            return null;
+        }
+
         $content = strip_tags($content);
         $content = htmlentities($content);
 
