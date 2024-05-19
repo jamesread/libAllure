@@ -134,10 +134,21 @@ class ElementFile extends Element
             $offsetY = ($finH - $dstH) / 2;
         }
 
-        $backgroundColor = \imagecolorallocate($imageResized, 255, 255, 255);
+        $backgroundColor = \imagecolorallocatealpha($imageResized, 255, 255, 255, 127);
         \imagefill($imageResized, 0, 0, $backgroundColor);
 
-        \imagecopyresampled($imageResized, $srcImage, $offsetX, $offsetY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH);
+        \imagecopyresampled(
+            $imageResized,
+            $srcImage,
+            intval($offsetX),
+            intval($offsetY),
+            intval($srcX),
+            intval($srcY),
+            intval($dstW),
+            intval($dstH),
+            intval($srcW),
+            intval($srcH)
+        );
 
         return $imageResized;
     }

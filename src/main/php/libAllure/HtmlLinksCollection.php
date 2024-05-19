@@ -167,6 +167,8 @@ class HtmlLinksCollection implements \Iterator, \Countable
                 return $childCollection;
             }
         }
+
+        return $childCollection;
     }
 
     public function getAll()
