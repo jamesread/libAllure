@@ -354,7 +354,7 @@ abstract class Form
                 // If checkboxes are not checked browsers do not include them in
                 // $_POST, but we have them in our form, so set to 0.
                 $e->setValue(0);
-            } elseif ($e instanceof ElementButton || $e instanceof ElementHtml) {
+            } elseif ($e instanceof ElementButton || $e instanceof ElementHtml || $e instanceof ElementFile) {
                 // These elements cannot have values.
             } else {
                 if (isset($_POST[$name])) {

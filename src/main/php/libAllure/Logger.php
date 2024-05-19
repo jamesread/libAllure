@@ -55,7 +55,12 @@ abstract class Logger
 
     public static function messageNormal($message, $eventType = null, array $metadata = null)
     {
-        self::message('NORM', $message, $eventType, $metadata);
+        self::message('INFO', $message, $eventType, $metadata);
+    }
+
+    public static function messageInfo($message, $eventType = null, array $metadata = null)
+    {
+        self::message('INFO', $message, $eventType, $metadata);
     }
 
     public static function messageException($e, $comment = null)
@@ -74,9 +79,19 @@ abstract class Logger
         }
     }
 
+    public static function messageError($message, $eventType)
+    {
+        self::message('ERROR', $message, $eventType);
+    }
+
     public static function messageDebug($message, $eventType = null, array $metadata = null)
     {
-        self::message('DEBG', $message, $eventType, $metadata);
+        self::message('DEBUG', $message, $eventType, $metadata);
+    }
+
+    public static function messageAudit($message, $eventType = null, array $metadata = null)
+    {
+        self::message('AUDIT', $message, $eventType, $metadata);
     }
 
     private static function message($priority, $messageActual, $eventType = null, array $metadata = null)

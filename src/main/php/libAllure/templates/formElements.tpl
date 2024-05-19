@@ -4,14 +4,16 @@
 	{if is_array($element)}
 		{include file = "formElements.tpl" elements=$element}
 	{else}
-		{if $element->getType() eq 'hidden'}
+		{if $element->getType() eq 'ElementHidden'}
 			<input type = "hidden" name = "{$element->getName()}" value = "{$element->getValue()}" />
-		{elseif $element->getType() eq 'html'}
+		{elseif $element->getType() eq 'ElementHtml'}
 			{$element->getValue()}
-		{elseif $element->getType() eq 'submit'}
+		{elseif $element->getType() eq 'ElementButton'}
 			<button value = "{$form->getName()}" name = "{$element->getName()}" type = "submit">{$element->getCaption()}</button>
 		{else}
 			<fieldset>
+				<label class = "{($element->isRequired()) ? 'required' : 'optional'}" for = "{$element->getName()}">{$element->getCaption()}</label>
+
 				{$element->render()}
 
 				{if $element->description ne ''}

@@ -12,6 +12,8 @@ class ElementDate extends ElementInput
         $today = new \DateTime();
         $today = $today->format($this->format);
 
+        $this->type = 'datetime-local';
+
         $this->addSuggestedValue($today, 'Today');
     }
 

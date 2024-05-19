@@ -281,6 +281,11 @@ class ErrorHandler
 
     public function handleException($obj)
     {
+        if ($obj instanceof \libAllure\exceptions\SimpleFatalError) {
+            $this->renderSfe($obj);
+            return;
+        }
+
         $message = $obj->getMessage();
         $code = $obj->getCode();
         $file = $obj->getFile();
@@ -293,6 +298,12 @@ class ErrorHandler
     public function setCss($css)
     {
         $this->css = $css;
+    }
+
+    public function renderSfe($obj)
+    {
+        echo $obj;
+        exit;
     }
 
     public function null()
