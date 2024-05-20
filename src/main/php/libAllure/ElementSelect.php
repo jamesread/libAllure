@@ -23,6 +23,15 @@ class ElementSelect extends Element
         }
     }
 
+    public function getValue()
+    {
+        if ($this->value == '') {
+            return null;
+        }
+
+        return $this->value;
+    }
+
     public function render()
     {
         $strOptions = '';
@@ -32,7 +41,7 @@ class ElementSelect extends Element
                 $key = $val;
             }
 
-            $sel = ($key == $this->value) ? 'selected = "selected"' : '';
+            $sel = ($key === $this->value) ? 'selected = "selected"' : '';
 
             $strOptions .= sprintf('<option value = "%s" %s>%s</option>', $key, $sel, $val);
         }
