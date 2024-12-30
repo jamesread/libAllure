@@ -77,6 +77,6 @@ class ConfigFile
 
     public function getDsn($type = 'mysql'): string
     {
-        return $type . ':dbname=' . $this->get('DB_NAME');
+        return $type . ':host=' . $this->get('DB_HOST') . ';dbname=' . $this->get('DB_NAME');
     }
 }
