@@ -25,7 +25,7 @@ class ConfigFile
         }
     }
 
-    public function tryLoad(array $possiblePaths)
+    public function tryLoad(array $possiblePaths): bool
     {
         $foundAConfig = false;
 
@@ -36,12 +36,10 @@ class ConfigFile
             }
         }
 
-        if (!$foundAConfig) {
-            $this->createConfigFile($possiblePaths[0]);
-        }
+        return $foundAConfig;
     }
 
-    private function createConfigFile($path)
+    public function createConfigFile($path)
     {
         if (!is_writable($path)) {
             throw new \Exception('Could not save a default config file as the path is not writable:  ' . $path);
@@ -58,7 +56,7 @@ class ConfigFile
 
     private function load($fullpath)
     {
-        $this->keys = parse_ini_file($fullpath, false);
+        $this->keys = array_merge($this->keys, parse_ini_file($fullpath, false));
     }
 
     public function getAll(): array
@@ -72,7 +70,19 @@ class ConfigFile
             return $this->keys[$k];
         }
 
+        if (isset($_ENV[$k])) {
+            $this->keys[$k] = $_ENV[$k];
+
+            return $_ENV[$k];
+        }
+
         return null;
+    }
+
+    public function getBool($k): bool
+    {
+        // Deliberately use ==, not ===, so that '1' and 'true' are both considered true.
+        return $this->get($k) == true;
     }
 
     public function getDsn($type = 'mysql'): string
