@@ -25,6 +25,13 @@ class ConfigFile
         }
     }
 
+    public function set(array $pairs)
+    {
+        foreach ($pairs as $k => $v) {
+            $this->keys[$k] = $v;
+        }
+    }
+
     public function tryLoad(array $possiblePaths): bool
     {
         $foundAConfig = false;
