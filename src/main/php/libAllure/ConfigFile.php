@@ -32,7 +32,7 @@ class ConfigFile
         }
     }
 
-    public function tryLoad(array $possiblePaths): bool
+    public function loadFromPaths(array $possiblePaths): bool
     {
         $foundAConfig = false;
 
@@ -44,6 +44,16 @@ class ConfigFile
         }
 
         return $foundAConfig;
+    }
+
+    private function load($fullpath)
+    {
+        $this->keys = array_merge($this->keys, parse_ini_file($fullpath, false));
+    }
+
+    public function loadFromEnv()
+    {
+        $this->keys = array_merge($this->keys, $_ENV);
     }
 
     public function createConfigFile($path)
@@ -59,11 +69,6 @@ class ConfigFile
         }
 
         file_put_contents($path . $this->filename, $content);
-    }
-
-    private function load($fullpath)
-    {
-        $this->keys = array_merge($this->keys, parse_ini_file($fullpath, false));
     }
 
     public function getAll(): array
