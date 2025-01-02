@@ -43,7 +43,7 @@ class ConfigFileTest extends TestCase {
     public function testLoad()
     {
         $cfg = new ConfigFile();
-        $cfg->tryLoad([
+        $cfg->loadFromPaths([
             '/tmp/libAllure/',
         ]);
 
