@@ -116,7 +116,7 @@ SELECT
 FROM
    permissions p,
    privileges_g gp,
-   groups g,
+   `groups` g,
    group_memberships gm,
    users u
 
@@ -152,7 +152,7 @@ SQL;
     {
         $ret = [];
 
-        $sql = 'SELECT distinct p.key, p.description, u.username as userUsername, u.id as userId, g.id groupId, g.title groupTitle FROM permissions p, users u, groups g, privileges_g gp WHERE u.group = g.id AND gp.`group` = g.id AND gp.permission = p.id AND u.id = :uid ';
+        $sql = 'SELECT distinct p.key, p.description, u.username as userUsername, u.id as userId, g.id groupId, g.title groupTitle FROM permissions p, users u, `groups` g, privileges_g gp WHERE u.group = g.id AND gp.`group` = g.id AND gp.permission = p.id AND u.id = :uid ';
         $stmt = DatabaseFactory::getInstance()->prepare($sql);
         $stmt->execute([
             'uid' => $this->getId(),
@@ -243,14 +243,14 @@ SQL;
     {
         $this->usergroups = array();
 
-        $sql = 'SELECT g.*, "primary" AS type FROM groups g, users u WHERE u.group = g.id AND u.id = :id LIMIT 1';
+        $sql = 'SELECT g.*, "primary" AS type FROM `groups` g, users u WHERE u.group = g.id AND u.id = :id LIMIT 1';
         $stmt = DatabaseFactory::getInstance()->prepare($sql);
         $stmt->bindValue(':id', $this->getId());
         $stmt->execute();
 
         $this->usergroups['primary'] = $stmt->fetchRow();
 
-        $sql = 'SELECT g.*, "supplimentary" AS type FROM group_memberships gm, groups g WHERE gm.group = g.id AND gm.user = :id ';
+        $sql = 'SELECT g.*, "supplimentary" AS type FROM group_memberships gm, `groups` g WHERE gm.group = g.id AND gm.user = :id ';
         $stmt = DatabaseFactory::getInstance()->prepare($sql);
         $stmt->bindValue(':id', $this->getId());
         $stmt->execute();
@@ -321,7 +321,7 @@ SQL;
 
     public static function getAllLocalUsers()
     {
-        $sql = 'SELECT u.*, g.id as groupId, g.title as groupTitle, g.css FROM users u, groups g WHERE u.group = g.id ORDER BY u.id ';
+        $sql = 'SELECT u.*, g.id as groupId, g.title as groupTitle, g.css FROM users u, `groups` g WHERE u.group = g.id ORDER BY u.id ';
         $stmt = DatabaseFactory::getInstance()->prepare($sql);
         $stmt->execute();
 
