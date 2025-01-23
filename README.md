@@ -9,6 +9,7 @@ This library is published by packagist.org for easy use with composer; https://p
 
 **API Documentation**: http://jamesread.github.io/libAllure/
 
+[![Maturity Badge](https://img.shields.io/badge/maturity-Production-brightgreen)](#none)
 [![Unit Tests](https://github.com/jamesread/libAllure/actions/workflows/unittests.yml/badge.svg)](https://github.com/jamesread/libAllure/actions/workflows/unittests.yml)
 [![Stan](https://github.com/jamesread/libAllure/actions/workflows/phpstan.yml/badge.svg)](https://github.com/jamesread/libAllure/actions/workflows/phpstan.yml)
 [![CodeStyle](https://github.com/jamesread/libAllure/actions/workflows/codestyle.yml/badge.svg)](https://github.com/jamesread/libAllure/actions/workflows/codestyle.yml)
