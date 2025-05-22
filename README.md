@@ -3,16 +3,11 @@ libAllure
 
 A set of utilities, helpers and shims. It aims to be pretty modular and lightweight.
 
-This library is published by packagist.org for easy use with composer; https://packagist.org/packages/jwread/lib-allure 
-
-[![PHP Composer](https://github.com/jamesread/libAllure/actions/workflows/php.yml/badge.svg)](https://github.com/jamesread/libAllure/actions/workflows/php.yml)
-
-**API Documentation**: http://jamesread.github.io/libAllure/
+[packagist.org Package](https://packagist.org/packages/jwread/lib-allure) for compose |
+[API Documentation](http://jamesread.github.io/libAllure/)
 
 [![Maturity Badge](https://img.shields.io/badge/maturity-Production-brightgreen)](#none)
-[![Unit Tests](https://github.com/jamesread/libAllure/actions/workflows/unittests.yml/badge.svg)](https://github.com/jamesread/libAllure/actions/workflows/unittests.yml)
-[![Stan](https://github.com/jamesread/libAllure/actions/workflows/phpstan.yml/badge.svg)](https://github.com/jamesread/libAllure/actions/workflows/phpstan.yml)
-[![CodeStyle](https://github.com/jamesread/libAllure/actions/workflows/codestyle.yml/badge.svg)](https://github.com/jamesread/libAllure/actions/workflows/codestyle.yml)
+[![Release Pipeline](https://github.com/jamesread/libAllure/actions/workflows/php.yml/badge.svg)](https://github.com/jamesread/libAllure/actions/workflows/release.yml)
 
 ## Compatibiility
 
