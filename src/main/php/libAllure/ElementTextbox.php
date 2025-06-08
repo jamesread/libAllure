@@ -4,8 +4,8 @@ namespace libAllure;
 
 class ElementTextbox extends Element
 {
-	public $rows = 8;
-	public $cols = 80;
+    public $rows = 8;
+    public $cols = 80;
 
     public function render()
     {
