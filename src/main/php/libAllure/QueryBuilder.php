@@ -34,7 +34,7 @@ class QueryBuilder
         return $this;
     }
 
-    public function from(string $tableName, string $alias = null, string $database = null)
+    public function from(string $tableName, ?string $alias = null, ?string $database = null)
     {
         if ($this->from !== null) {
             throw new \Exception('QB from() already used');

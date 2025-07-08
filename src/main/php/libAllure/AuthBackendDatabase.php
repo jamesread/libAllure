@@ -30,7 +30,7 @@ class AuthBackendDatabase extends \libAllure\AuthBackend
     private $prefixSalt = null;
     private $suffixSalt = null;
 
-    public function __construct(Database $databaseInstance = null)
+    public function __construct(?Database $databaseInstance = null)
     {
         if ($databaseInstance == null) {
             $this->database = DatabaseFactory::getInstance();

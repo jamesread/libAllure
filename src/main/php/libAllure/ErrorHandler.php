@@ -320,7 +320,7 @@ class ErrorHandler
 
     public function beGreedy()
     {
-        error_reporting(E_ALL | E_STRICT);
+        error_reporting(E_ALL);
 
         ini_set('xdebug.var_display_max_depth', 5);
 

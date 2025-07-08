@@ -30,7 +30,7 @@ class FormHandler
 
     private $constructorArguments;
 
-    public function __construct($formName, \libAllure\Template $tpl = null)
+    public function __construct($formName, ?\libAllure\Template $tpl = null)
     {
         $this->formName = $formName;
         $this->tpl = $tpl;

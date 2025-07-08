@@ -22,6 +22,7 @@ namespace libAllure;
 
 use libAllure\Inflector;
 use libAllure\Form;
+use libAllure\Sanitizer;
 
 class Template extends \Smarty
 {
@@ -46,6 +47,7 @@ class Template extends \Smarty
 
 //      $this->registerFunction('getContent', 'tplGetContent');
         $this->registerModifier('htmlify', array($this, 'htmlify'));
+        $this->registerModifier('toHtml', array($this, 'htmlify'));
         $this->registerModifier('externUrl', array($this, 'externUrl'));
         $this->registerModifier('externUrlOr', array($this, 'externUrlOr'));
         $this->registerModifier('inflectorQuantify', array('\libAllure\Inflector', 'quantify'));
@@ -58,10 +60,7 @@ class Template extends \Smarty
 
     public function htmlify($content, $paragraphs = true)
     {
-        $content = stripslashes($content);
-        $content = strip_tags($content);
-        $content = htmlentities($content);
-        $content = str_replace(chr(96), '&quot;', $content);
+        $content = Sanitizer::getInstance()->toHtml($content);
 
         if ($paragraphs) {
             $content = $this->parify($content);

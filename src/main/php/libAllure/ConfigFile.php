@@ -8,7 +8,7 @@ class ConfigFile
 
     public $filename = '/config.ini';
 
-    public function __construct(array $additionalKeys = null, $useDefaultKeys = true)
+    public function __construct(?array $additionalKeys = null, $useDefaultKeys = true)
     {
         $this->keys = [];
 

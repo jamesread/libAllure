@@ -236,6 +236,7 @@ class Sanitizer
 
         $content = strip_tags($content);
         $content = htmlentities($content);
+        $content = str_replace(chr(96), '&quot;', $content);
 
         return $content;
     }
@@ -248,6 +249,11 @@ class Sanitizer
     public function formatStringForDatabase($content)
     {
         return $this->escapeStringForDatabase($content);
+    }
+
+    public function toHtml($content)
+    {
+        return $this->escapeStringForHtml($content);
     }
 
     public function formatStringForHtml($content)

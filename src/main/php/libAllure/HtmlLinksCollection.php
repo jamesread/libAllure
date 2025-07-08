@@ -154,7 +154,7 @@ class HtmlLinksCollection implements \Iterator, \Countable
         );
     }
 
-    public function addChildCollection($title, HtmlLinksCollection $childCollection = null)
+    public function addChildCollection($title, ?HtmlLinksCollection $childCollection)
     {
         if ($childCollection == null) {
             $childCollection = new HtmlLinksCollection();
