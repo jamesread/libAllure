@@ -9,7 +9,7 @@ jobs:
       fail-fast: false
       matrix:
         php: [
-          # 8.4, # disabled: https://github.com/jamesread/lan-party-publisher-php/actions/runs/15181940016/job/42693152449
+          8.4,
           8.3,
           8.2,
           8.1
