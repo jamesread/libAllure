@@ -153,24 +153,6 @@ class Template extends \Smarty
         $this->display($tplName);
     }
 
-    public function displayWithHeaderAndFooter($tplName)
-    {
-        require_once 'includes/widgets/header.php';
-        $this->display($tplName);
-        require_once 'includes/widgets/footer.php';
-    }
-
-    public function error($message = null)
-    {
-        $tpl = $this;
-        require_once 'includes/widgets/header.php';
-
-        $this->assign('errorMessage', $message);
-        $this->display('error.tpl');
-
-        require_once 'includes/widgets/footer.php';
-    }
-
     public function display($template = null, $cacheId = null, $compileId = null, $parent = null)
     {
         parent::display($template, $cacheId, $compileId);

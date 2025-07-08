@@ -6,12 +6,10 @@ use libAllure\AuthBackend;
 
 class AuthBackendOpenId extends AuthBackend
 {
-    private ?\LightOpenID $openid;
+    private \LightOpenID $openid;
 
     public function __construct($domain)
     {
-        require_once 'lightopenid/openid.php';
-
         if ($domain[strlen($domain) - 1] != '/') {
             throw new \Exception('Domain must end with a /');
         }

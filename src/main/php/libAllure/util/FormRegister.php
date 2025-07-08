@@ -25,12 +25,6 @@ class FormRegister extends \libAllure\Form
     {
         $this->validateUsername();
         $this->validatePassword();
-        $this->validateEmail();
-    }
-
-    private function validateEmail()
-    {
-        // FIXME
     }
 
     private function validateUsername()

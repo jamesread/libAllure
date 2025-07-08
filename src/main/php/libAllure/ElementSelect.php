@@ -60,7 +60,7 @@ class ElementSelect extends Element
 
         $suggestedValues = array();
         foreach ($this->suggestedValues as $suggestedValue => $caption) {
-            if (strpos($suggestedValue, 'jpg') !== -1) {
+            if (strpos($suggestedValue, 'jpg') !== false) {
                 $caption = '<img class = "suggestedValue" src = "' . $suggestedValue . '" />';
                 $suggestedValue = basename($suggestedValue);
             }

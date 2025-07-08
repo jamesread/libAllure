@@ -25,8 +25,6 @@ class FormHandler
     private $form = null;
     private $formName;
     private $tpl;
-    private $showSidebar = false;
-    public $showFooter = true;
 
     private $constructorArguments;
 
@@ -43,11 +41,6 @@ class FormHandler
         $this->constructorArguments = range(0, 5);
 
         $this->setRedirect(null, null);
-    }
-
-    public function showSidebar($showSidebar)
-    {
-        $this->showSidebar = $showSidebar;
     }
 
     public function constructForm()
@@ -84,18 +77,8 @@ class FormHandler
 
     protected function handleRenderForm(\libAllure\Form $form)
     {
-        require_once 'includes/widgets/header.php';
-
-        if ($this->showSidebar) {
-            require_once 'includes/widgets/sidebar.php';
-        }
-
         $this->tpl->assignForm($form);
         $this->tpl->display('form.tpl');
-
-        if ($this->showFooter) {
-            require_once 'includes/widgets/footer.php';
-        }
     }
 
     public function setConstructorArgument($id, $value)
