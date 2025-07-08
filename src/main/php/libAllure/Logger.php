@@ -84,7 +84,7 @@ abstract class Logger
         self::message('ERROR', $message, $eventType);
     }
 
-    public static function messageDebug($message, $eventType = null, ?array $metadata= null)
+    public static function messageDebug($message, $eventType = null, ?array $metadata = null)
     {
         self::message('DEBUG', $message, $eventType, $metadata);
     }
