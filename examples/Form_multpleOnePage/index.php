@@ -2,9 +2,9 @@
 
 date_default_timezone_set('Europe/London');
 
-require_once 'libAllure/Form.php';
-require_once 'libAllure/ErrorHandler.php';
-require_once 'libAllure/Template.php';
+set_include_path(get_include_path() . PATH_SEPARATOR . '../../src/main/php/' . PATH_SEPARATOR . '../../vendor/');
+
+require_once 'autoload.php';
 
 use \libAllure\Form;
 use \libAllure\ErrorHandler;
@@ -24,7 +24,7 @@ class FormOne extends Form {
 
 	public function process() {
 		echo 'Process FormOne';
-	}	
+	}
 }
 
 class FormTwo extends Form {

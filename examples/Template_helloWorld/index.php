@@ -2,7 +2,9 @@
 
 date_default_timezone_set('Europe/London');
 
-require_once 'libAllure/Template.php';
+set_include_path(get_include_path() . PATH_SEPARATOR . '../../src/main/php/' . PATH_SEPARATOR . '../../vendor/');
+
+require_once 'autoload.php';
 
 use \libAllure\Template;
 
