@@ -22,9 +22,11 @@ class ElementInput extends Element
         $value = stripslashes($value);
         $value = strip_tags($value);
 
-        $classes = ($this->required) ? ' class = "required" ' : null;
+		$classes = ($this->required) ? ' class = "required" ' : null;
 
-        return sprintf('<input type = "%s" %s %s id = "%s" name = "%s" value = "%s" />', $this->type, $this->extraHtml, $onChange, $this->name, $this->name, $value);
+		$datalistName = 'suggestedValues_' . $this->name;
+
+        return sprintf('<input type = "%s" list = "%s" %s %s id = "%s" name = "%s" value = "%s" />', $this->type, $datalistName, $this->extraHtml, $onChange, $this->name, $this->name, $value);
     }
 
     protected function validateInternals()

@@ -20,13 +20,11 @@
 				<p class = "description"><img src = "resources/images/icons/help.png" class = "imageIcon" alt = "Form element help" />{$element->description}</p>
 				{/if}
 
-				{if !empty($suggestedValues)}
-				<div>
-					{foreach from = $suggestedValues key = sv item = caption}
-						<span class = "dummyLink" onclick = "document.getElementById('{$element->getName()}').value = '{$sv} '">{$caption}</span>';
-					{/foreach}
-				</div>
-				{/if}
+				<datalist id = "suggestedValues_{$element->getName()}">
+				{foreach from = $element->getSuggestedValues() key = sv item = caption}
+					<option value = "{$sv}">{$caption}</option>
+				{/foreach}
+				</datalist>
 
 				{if $element->getValidationError() ne ''}
 				<p class = "formValidationError">{$element->getValidationError()}</p>
