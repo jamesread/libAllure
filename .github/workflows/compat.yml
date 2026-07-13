@@ -26,6 +26,9 @@ jobs:
           - line: 8.x
             ref: HEAD
             php: "8.4"
+          - line: 8.x
+            ref: HEAD
+            php: "8.5"
 
     name: ${{ matrix.line }} / PHP ${{ matrix.php }}
     defaults:

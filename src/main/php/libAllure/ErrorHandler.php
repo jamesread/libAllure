@@ -266,7 +266,7 @@ class ErrorHandler
                 return 'PHP User Warning';
             case E_USER_NOTICE:
                 return 'PHP User Notice';
-            case E_STRICT:
+            case 2048: // E_STRICT (removed in PHP 8.5)
                 return 'PHP E_STRICT ';
             case E_RECOVERABLE_ERROR:
                 return 'PHP Recoverable Error';

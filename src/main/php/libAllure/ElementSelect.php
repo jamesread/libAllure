@@ -5,6 +5,7 @@ namespace libAllure;
 class ElementSelect extends Element
 {
     public $options = array();
+    public $multiple = false;
     private $size = null;
 
     public function addOption($value, $key = null)
@@ -76,7 +77,7 @@ class ElementSelect extends Element
 
         $multiple = '';
 
-        if (isset($this->multiple)) {
+        if ($this->multiple) {
             $multiple = 'multiple';
             $htmlName .= '[]';
         }

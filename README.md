@@ -22,13 +22,13 @@ Versions 1.x and 2.x are deprecated and not supported. Compatibility testing cov
 
 ### 8.x release lines
 
-|                 | Latest | PHP 8.0            | PHP 8.1            | PHP 8.2            | PHP 8.3            | PHP 8.4            |
-| --------------- | ------ | ------------------ | ------------------ | ------------------ | ------------------ | ------------------ |
-| libAllure 8.0.x | 8.0.4  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| libAllure 8.1.x | 8.1.30 | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| libAllure 8.2.x | 8.2.2  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| libAllure 8.3.x | 8.3.0  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| libAllure 8.4.x | 8.4.0  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+|                 | Latest | PHP 8.0            | PHP 8.1            | PHP 8.2            | PHP 8.3            | PHP 8.4            | PHP 8.5            |
+| --------------- | ------ | ------------------ | ------------------ | ------------------ | ------------------ | ------------------ | ------------------ |
+| libAllure 8.0.x | 8.0.4  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                |
+| libAllure 8.1.x | 8.1.30 | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                |
+| libAllure 8.2.x | 8.2.2  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                |
+| libAllure 8.3.x | 8.3.0  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                |
+| libAllure 8.4.x | 8.4.0  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 
 Run the full matrix locally with `make compat` (requires Docker for PHP versions other than your host). The matrix is defined in `compat/matrix.json` and runs on every push and pull request via `.github/workflows/compat.yml`.
 

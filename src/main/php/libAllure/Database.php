@@ -39,7 +39,10 @@ class Database extends \PDO
 
         $this->setAttribute(\PDO::ATTR_STATEMENT_CLASS, array('\libAllure\DatabaseStatement', array($this)));
         $this->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-        $this->setAttribute(\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+        $bufferedQuery = class_exists(\Pdo\Mysql::class)
+            ? \Pdo\Mysql::ATTR_USE_BUFFERED_QUERY
+            : \PDO::MYSQL_ATTR_USE_BUFFERED_QUERY;
+        $this->setAttribute($bufferedQuery, true);
         //$this->setAttribute(PDO::MYSQL_ATTR_DIRECT_QUERY, true);
     }
 
