@@ -1,0 +1,13 @@
+<phpunit>
+	<testsuites>
+		<testsuite name="main">
+			<directory suffix="Test.php">../src/test/php</directory>
+			<exclude>../src/test/php/DatabaseTest.php</exclude>
+		</testsuite>
+	</testsuites>
+	<groups>
+		<exclude>
+			<group>database</group>
+		</exclude>
+	</groups>
+</phpunit>

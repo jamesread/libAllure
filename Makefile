@@ -5,6 +5,12 @@ phpunit: tests
 
 tests:
 	composer run-script test
+
+compat:
+	./scripts/run-compat-tests.sh
+
+compat-native:
+	./scripts/run-compat-tests.sh --native
 	
 lint: phpcs
 
@@ -18,4 +24,4 @@ docs:
 	doxygen
 
 
-.PHONY: test tests default lint
+.PHONY: test tests default lint compat compat-native

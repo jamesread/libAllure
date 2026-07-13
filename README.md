@@ -7,7 +7,8 @@ A set of utilities, helpers and shims. It aims to be pretty modular and lightwei
 [API Documentation](http://jamesread.github.io/libAllure/)
 
 [![Maturity Badge](https://img.shields.io/badge/maturity-Production-brightgreen)](#none)
-[![Release Pipeline](https://github.com/jamesread/libAllure/actions/workflows/php.yml/badge.svg)](https://github.com/jamesread/libAllure/actions/workflows/release.yml)
+[![Release Pipeline](https://github.com/jamesread/libAllure/actions/workflows/release.yml/badge.svg)](https://github.com/jamesread/libAllure/actions/workflows/release.yml)
+[![PHP Compatibility](https://github.com/jamesread/libAllure/actions/workflows/compat.yml/badge.svg)](https://github.com/jamesread/libAllure/actions/workflows/compat.yml)
 
 ## Compatibiility
 
@@ -17,7 +18,7 @@ A set of utilities, helpers and shims. It aims to be pretty modular and lightwei
 | libAllure 2.x | not supported   | supported     | not supported |
 | libAllure 8.x | not supported   | not supported | supported     |
 
-## Adding with `composer`
+Run the full matrix locally with `make compat` (requires Docker for PHP versions other than your host). The matrix is defined in `compat/matrix.json` and runs on every push and pull request via `.github/workflows/compat.yml`.
 
 You can add libAllure to your project quickly, if you're using composer.
 
