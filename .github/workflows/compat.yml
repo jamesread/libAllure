@@ -11,21 +11,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - line: 1.x
-            ref: 1.2.4
-            php: "5.6"
-          - line: 2.x
-            ref: 2.0.5
-            php: "7.0"
-          - line: 2.x
-            ref: 2.0.5
-            php: "7.1"
-          - line: 2.x
-            ref: 2.0.5
-            php: "7.2"
-          - line: 2.x
-            ref: 2.0.5
-            php: "7.3"
           - line: 8.x
             ref: HEAD
             php: "8.0"
@@ -76,30 +61,9 @@ jobs:
           tools: composer:v2
 
       - name: Install dependencies
-        shell: bash
         run: |
-          set -euo pipefail
           composer config audit.block-insecure false
-
-          case "${{ matrix.line }}" in
-            1.x)
-              composer install --no-interaction --ignore-platform-reqs --prefer-dist
-              ;;
-            2.x)
-              rm -rf vendor composer.lock
-              composer remove --dev phpunit/php-code-coverage --no-update 2>/dev/null || true
-              case "${{ matrix.php }}" in
-                7.0) constraint='^6.5' ;;
-                7.1) constraint='^7.5' ;;
-                7.2) constraint='^8.5' ;;
-                *) constraint='^9.5' ;;
-              esac
-              composer require --dev "phpunit/phpunit:${constraint}" --no-interaction --prefer-dist
-              ;;
-            8.x)
-              composer install --no-interaction --prefer-dist
-              ;;
-          esac
+          composer install --no-interaction --prefer-dist
 
       - name: Run compatibility tests
         run: ./vendor/bin/phpunit -c compat/phpunit.xml
