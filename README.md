@@ -12,23 +12,27 @@ A set of utilities, helpers and shims. It aims to be pretty modular and lightwei
 
 ## Compatibility
 
-|               | Up to PHP 5.5.x | Up to PHP 7.3 | PHP 8         |
-| ------------- | --------------- | ------------- | ------------- |
-| libAllure 1.x | :x:             | :x:           | :x:           |
-| libAllure 2.x | :x:             | :x:           | :x:           |
-| libAllure 8.x | :x:             | :x:           | :white_check_mark: |
-
-Versions 1.x and 2.x are deprecated and not supported. Compatibility testing covers 8.x only.
-
-### 8.x release lines
-
 |                 | Latest | PHP 8.0            | PHP 8.1            | PHP 8.2            | PHP 8.3            | PHP 8.4            | PHP 8.5            |
 | --------------- | ------ | ------------------ | ------------------ | ------------------ | ------------------ | ------------------ | ------------------ |
-| libAllure 8.0.x | 8.0.4  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                |
-| libAllure 8.1.x | 8.1.30 | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                |
-| libAllure 8.2.x | 8.2.2  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                |
+| libAllure 8.5.x | 8.5.0  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| libAllure 8.4.x | 8.4.0  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                |
 | libAllure 8.3.x | 8.3.0  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                |
-| libAllure 8.4.x | 8.4.0  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| libAllure 8.2.x | 8.2.2  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                |
+| libAllure 8.1.x | 8.1.30 | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                |
+| libAllure 8.0.x | 8.0.4  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                |
+
+<details>
+<summary>
+<strong>Unsupported and untested versions</strong>
+</summary>
+
+|               | Approximate PHP support |
+| ------------- | ----------------------- |
+| libAllure 2.x | Approximately PHP 7.3   |
+| libAllure 1.x | Approximately PHP 5.5   |
+
+Versions 1.x and 2.x are deprecated and not supported. Compatibility testing covers 8.x only.
+</details>
 
 Run the full matrix locally with `make compat` (requires Docker for PHP versions other than your host). The matrix is defined in `compat/matrix.json` and runs on every push and pull request via `.github/workflows/compat.yml`.
 
