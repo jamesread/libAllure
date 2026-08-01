@@ -25,6 +25,7 @@ class ErrorHandler
     protected $css = "margin: auto; width: 75%; background-color: #FFBCBA; border: 2px solid black; line-height: 1.5; padding: 6px; font-family: Verdana, Sans-Serif; font-size: 9pt; text-align: left;";
     protected $cssErrorTitle = 'background-color: red; color: white; text-align: left; margin: 0; padding: .5em; font-size: 12pt;';
     public static $instance;
+    protected $listeners = array();
 
     /**
      * Constructs the new class.
@@ -37,6 +38,18 @@ class ErrorHandler
         if ($greedy) {
             $this->beGreedy();
         }
+    }
+
+    /**
+     * Register a callback invoked after error_log when an error is rendered.
+     *
+     * The callback receives: $trigger, $message, $code, $file, $line, $stacktrace.
+     *
+     * @param callable $callback
+     */
+    public function addListener($callback)
+    {
+        $this->listeners[] = $callback;
     }
 
     /**
@@ -71,9 +84,22 @@ class ErrorHandler
      * @param $stacktrace A stacktrace leading up to this error ( should be a
      * array).
      */
+    protected function notifyListeners($trigger, $message, $code = null, $file = null, $line = null, $stacktrace = null)
+    {
+        foreach ($this->listeners as $callback) {
+            try {
+                call_user_func($callback, $trigger, $message, $code, $file, $line, $stacktrace);
+            } catch (\Throwable $e) {
+                error_log('ErrorHandler listener failed: ' . $e->getMessage());
+            }
+        }
+    }
+
     protected function render($trigger, $message, $code = null, $file = null, $line = null, $stacktrace = null)
     {
         error_log("trigger: $trigger. message: $message. code: $code. file: $file. line: $line ");
+
+        $this->notifyListeners($trigger, $message, $code, $file, $line, $stacktrace);
 
         if (class_exists('Logger', false)) {
             $metadata = '';
@@ -106,6 +132,92 @@ class ErrorHandler
         exit;
     }
 
+    protected function formatStacktraceArg($arg)
+    {
+        if (is_object($arg)) {
+            return get_class($arg);
+        }
+
+        if (is_null($arg)) {
+            return 'null';
+        }
+
+        if (is_string($arg)) {
+            return '"' . $arg . '"';
+        }
+
+        return print_r($arg, true);
+    }
+
+    protected function formatStacktraceArgs($args)
+    {
+        $parts = array();
+
+        foreach ($args as $arg) {
+            $parts[] = $this->formatStacktraceArg($arg);
+        }
+
+        return implode(', ', $parts);
+    }
+
+    protected function formatAsMarkdown($trigger, $message, $code = null, $file = null, $line = null, $stacktrace = null)
+    {
+        $md = "# Error!\n\n";
+        $md .= '**Message:** ' . $message . "\n\n";
+
+        if (isset($code)) {
+            $md .= '**Code:** ' . $code . "\n\n";
+        }
+
+        if (isset($line)) {
+            $md .= '**Line:** ' . $line . "\n\n";
+        }
+
+        if (isset($file)) {
+            $md .= '**File:** ' . $file . "\n\n";
+        }
+
+        $md .= '**Trigger:** ' . $trigger . "\n";
+
+        if (isset($stacktrace)) {
+            $md .= "\n## Stacktrace\n\n";
+
+            if (is_array($stacktrace) && !empty($stacktrace)) {
+                $md .= "| ID | File | Line | Class | Function call |\n";
+                $md .= "| --- | --- | --- | --- | --- |\n";
+
+                foreach ($stacktrace as $id => $point) {
+                    $point['class'] = (isset($point['class']) ? $point['class'] : '(none)');
+                    $point['file'] = (isset($point['file']) ? $point['file'] : '(none)');
+                    $point['line'] = (isset($point['line']) ? $point['line'] : '(none)');
+
+                    $call = $point['function'] . '(';
+
+                    if (isset($point['args'])) {
+                        $call .= $this->formatStacktraceArgs($point['args']);
+                    }
+
+                    $call .= ')';
+                    $call = str_replace(array('|', "\n", "\r"), array('\\|', ' ', ''), $call);
+
+                    $md .= '| ' . (sizeof($stacktrace) - $id)
+                        . ' | ' . str_replace('|', '\\|', $point['file'])
+                        . ' | ' . $point['line']
+                        . ' | ' . str_replace('|', '\\|', $point['class'])
+                        . ' | `' . $call . "` |\n";
+                }
+            } else {
+                if (is_array($stacktrace)) {
+                    $stacktrace = 'Empty';
+                }
+
+                $md .= $stacktrace . "\n";
+            }
+        }
+
+        return $md;
+    }
+
     protected function renderHtml($trigger, $message, $code = null, $file = null, $line = null, $stacktrace = null)
     {
         $this->clearOutputBuffers();
@@ -113,6 +225,15 @@ class ErrorHandler
         if (!ini_get('display_errors') == '1') {
             throw new \RuntimeException('A serious error has occoured, which cannot be sent via the web browser due to the webserver security configuration.');
         }
+
+        // If the message concerns the database, skip the stack trace for risk
+        // of printing db details.
+        if (strpos($message, 'database')) {
+            $stacktrace = null;
+        }
+
+        $markdown = $this->formatAsMarkdown($trigger, $message, $code, $file, $line, $stacktrace);
+        $markdownJson = json_encode($markdown, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
 
         // Show the error.
         echo "<!--\n##\n## ERROR: {$message} \n##\n-->\n";
@@ -135,12 +256,6 @@ class ErrorHandler
             echo '<strong>File: </strong>', $file, '<br />', "\n";
         }
 
-        // If the message concerns the database, skip the stack trace for risk
-        // of printing db details.
-        if (strpos($message, 'database')) {
-            $stacktrace = null;
-        }
-
         if (isset($stacktrace)) {
             if (is_array($stacktrace) && !empty($stacktrace)) {
                 echo '<strong>Stacktrace: </strong><br />';
@@ -154,7 +269,7 @@ class ErrorHandler
                     echo '<tr><td>' . (sizeof($stacktrace) - $id) . '</td><td>' . $point['file'] . '</td><td>' . $point['line'] . '</td><td>' . $point['class'] . '</td><td>' . $point ['function'] . '(';
 
                     if (isset($point['args'])) {
-                        foreach ($point['args'] as $id => $arg) {
+                        foreach ($point['args'] as $argId => $arg) {
                             if (is_object($arg)) {
                                 echo get_class($arg);
                             } elseif (is_null($arg)) {
@@ -165,7 +280,7 @@ class ErrorHandler
                                 print_r($arg);
                             }
 
-                            if (isset($point['args'][$id + 1])) {
+                            if (isset($point['args'][$argId + 1])) {
                                 echo ', ';
                             }
                         }
@@ -185,6 +300,28 @@ class ErrorHandler
         }
 
         echo '<strong>Trigger: </strong>', $trigger, '<br />';
+
+        echo '<p style = "margin-top: 1em;"><button type = "button" id = "liballure-copy-error-md" style = "padding: 0.4em 0.8em; font-family: Verdana, Sans-Serif; font-size: 9pt; cursor: pointer;">Copy to Markdown</button></p>', "\n";
+        echo '<script>', "\n";
+        echo '(function () {', "\n";
+        echo 'var md = ' . $markdownJson . ';', "\n";
+        echo 'var btn = document.getElementById("liballure-copy-error-md");', "\n";
+        echo 'if (!btn) { return; }', "\n";
+        echo 'btn.addEventListener("click", function () {', "\n";
+        echo 'function done() { btn.textContent = "Copied!"; setTimeout(function () { btn.textContent = "Copy to Markdown"; }, 1500); }', "\n";
+        echo 'if (navigator.clipboard && navigator.clipboard.writeText) {', "\n";
+        echo 'navigator.clipboard.writeText(md).then(done).catch(function () { fallback(); });', "\n";
+        echo '} else { fallback(); }', "\n";
+        echo 'function fallback() {', "\n";
+        echo 'var ta = document.createElement("textarea");', "\n";
+        echo 'ta.value = md; ta.setAttribute("readonly", ""); ta.style.position = "absolute"; ta.style.left = "-9999px";', "\n";
+        echo 'document.body.appendChild(ta); ta.select();', "\n";
+        echo 'try { document.execCommand("copy"); done(); } catch (e) {}', "\n";
+        echo 'document.body.removeChild(ta);', "\n";
+        echo '}', "\n";
+        echo '});', "\n";
+        echo '})();', "\n";
+        echo '</script>', "\n";
 
         echo '</div></div>';
 
