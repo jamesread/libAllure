@@ -20,9 +20,9 @@
 				<p class = "description"><img src = "resources/images/icons/help.png" class = "imageIcon" alt = "Form element help" />{$element->description}</p>
 				{/if}
 
-				<datalist id = "suggestedValues_{$element->getName()}">
+				<datalist id = "suggestedValues_{$element->getName()|escape:'html'}">
 				{foreach from = $element->getSuggestedValues() key = sv item = caption}
-					<option value = "{$sv}">{$caption}</option>
+					<option value = "{$sv|escape:'html'}">{$caption|escape:'html'}</option>
 				{/foreach}
 				</datalist>
 

@@ -17,6 +17,9 @@ class ElementTextbox extends Element
         $value = stripslashes($value);
         $value = strip_tags($value);
 
-        return sprintf('<textarea id = "%s" name = "%s" rows = "%s" cols = "%s">%s</textarea>', $this->name, $this->name, $this->rows, $this->cols, $this->value);
+        $rows = max(1, (int) $this->rows);
+        $cols = max(1, (int) $this->cols);
+
+        return sprintf('<textarea id = "%s" name = "%s" rows = "%d" cols = "%d">%s</textarea>', $this->name, $this->name, $rows, $cols, $value);
     }
 }
