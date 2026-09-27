@@ -39,7 +39,9 @@ jobs:
       - name: Checkout release under test
         uses: actions/checkout@v4
         with:
-          ref: ${{ matrix.ref }}
+          # actions/checkout treats ref as a branch/tag name; "HEAD" is not valid.
+          # Map matrix "HEAD" to the commit that triggered this workflow.
+          ref: ${{ matrix.ref == 'HEAD' && github.sha || matrix.ref }}
           path: src
           fetch-depth: 0
 
